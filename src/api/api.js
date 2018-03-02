@@ -15,7 +15,7 @@ export const deleteBanner = params => { return axios.post(`${context}/banner/del
 
 export const deleteBanners = params => { return axios.post(`${context}/banner/batchDelete/${params}`); };
 
-export const addBanner = params => { return axios.post(`${context}/banner/add`, params ); };
+export const addBanner = (oldFilename, newFilename, params) => { return axios.post(`${context}/banner/add?oldFilename=${oldFilename}&newFilename=${newFilename}`, params ); };
 
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
 

@@ -1,0 +1,15 @@
+.DS_Store
+node_modules/
+npm-debug.log
+.editorconfig
+dist/
+
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/admin.iml
+.babelrc
+.idea/vcs.xml
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/vcs.xml

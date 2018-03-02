@@ -16,22 +16,22 @@
 		</el-col>
 
 		<!--列表-->
-		<el-table :data="imgs" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+		<el-table :data="banners" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
 			<el-table-column type="selection" width="55">
 			</el-table-column>
 			<el-table-column type="index" width="60">
 			</el-table-column>
-			<el-table-column prop="imgDesc" label="图片描述" sortable>
-			</el-table-column>
-			<el-table-column prop="imgUrl" label="图片地址" min-width="180" sortable>
+			<el-table-column prop="bannerDesc" label="轮播图描述" sortable>
 			</el-table-column>
 			<el-table-column prop="createTime" label="创建时间" :formatter="dateFormat" sortable>
 			</el-table-column>
 			<el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
 			</el-table-column>
+			<el-table-column prop="type" label="图片性质" :formatter="typeFormat" sortable>
+			</el-table-column>
 			<el-table-column label="缩略图" render="columnRender" width="80">
-				<template slot-scope="scope">
-					<div class="zoomImage" :style="{'background-image':'url('+scope.row.imgUrl+')'}"></div>
+				<template slot-scope="scope" >
+					<div v-html="imgRowRender(scope.row)"></div>
 				</template>
 			</el-table-column>
 			<el-table-column label="操作" width="150">
@@ -53,11 +53,11 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-				<el-form-item label="图片描述" prop="imgDesc">
-					<el-input v-model="editForm.imgDesc" auto-complete="off"></el-input>
+				<el-form-item label="轮播图描述" prop="bannerDesc">
+					<el-input v-model="editForm.bannerDesc" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="图片地址">
-					<el-input v-model="editForm.imgUrl" :disabled=true></el-input>
+				<el-form-item label="图片性质">
+					<el-input v-model="editForm.type" :disabled=true></el-input>
 				</el-form-item>
 				<el-form-item label="创建时间">
 					<el-input v-model="editForm.createTime" :disabled=true></el-input>
@@ -75,8 +75,18 @@
 		<!--新增界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="图片描述" prop="imgDesc">
-					<el-input v-model="addForm.imgDesc" auto-complete="off"></el-input>
+				<el-form-item label="图片描述" prop="bannerDesc">
+					<el-input v-model="addForm.bannerDesc" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="图片性质" prop="type">
+					<el-select v-model="addForm.type" placeholder="类型">
+						<el-option
+								v-for="item in bannerType"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value">
+						</el-option>
+					</el-select>
 				</el-form-item>
 				<el-form-item label="图片上传">
 					<el-upload
@@ -92,8 +102,11 @@
 						<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
 					</el-upload>
 				</el-form-item>
-				<el-form-item label="图片地址" prop="imgUrl">
-					<el-input v-model="addForm.imgUrl" :disabled=true></el-input>
+				<el-form-item label="图片地址" prop="filename">
+					<el-input v-model="addForm.filename" :disabled=true></el-input>
+				</el-form-item>
+				<el-form-item label="关联电影" prop="mvId">
+					<el-tree :data="movies" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -115,9 +128,23 @@
 		data() {
 			return {
 				filters: {
-					imgDesc: ''
+					bannerDesc: ''
 				},
-				imgs: [],
+				banners: [],
+                bannerType: [
+                    {
+						value: '10',
+						label: '视频'
+					},
+					{
+						value: '20',
+						label: '广告'
+                	},
+                    {
+                        value: '30',
+                        label: '其他'
+                    }
+				],
 				total: 0,
 				page: 1,
 				pageSize: 10,
@@ -126,49 +153,56 @@
 				editFormVisible: false,//编辑界面是否显示
 				editLoading: false,
 				editFormRules: {
-                    imgDesc: [
-						{ required: true, message: '请输入图片描述', trigger: 'blur' }
+                    bannerDesc: [
+						{ required: true, message: '请输入轮播图描述', trigger: 'blur' }
 					]
 				},
 				//编辑界面数据
 				editForm: {
-					imgId: 0,
-					imgDesc: '',
-					imgUrl: '',
+					bannerId: 0,
+                    bannerDesc: '',
+					type: '',
 					createTime: ''
 				},
 
 				addFormVisible: false,//新增界面是否显示
 				addLoading: false,
 				addFormRules: {
-                    imgDesc: [
-                        { required: true, message: '请输入图片描述', trigger: 'blur' }
+                    bannerDesc: [
+                        { required: true, message: '请输入轮播图描述', trigger: 'blur' }
                     ],
-                    imgUrl: [
+                    filename: [
                         { required: true, message: '图片未上传', trigger: 'blur' }
-                    ]
+                    ],
+					type: [
+                        { required: true, message: '请选择图片性质', trigger: 'blur' }
+					]
 				},
 				//新增界面数据
 				addForm: {
-                    imgDesc: '',
-                    imgUrl: ''
+                    bannerDesc: '',
+					type: '',
+                    filename: '',
+                    newFilename: ''
 				},
-				uploadUrl: context + '/banner/fileUpload'
+                movies: [
+                    {
+                        label: '幼学',
+                        children: [
+                            {
+								label: '古诗词'
+							},
+							{
+							    label: '现代文学'
+							}
+                        ]
+                    }
+				],
+				uploadUrl: context + '/attach/doImgUpload',
+				downloadUrl: context + '/attach/readFile'
 			}
 		},
 		methods: {
-            columnRender (createElement, { column }) {
-                return createElement(
-                    'div',
-                    [
-                        createElement('a', ['==' + column.imgUrl + '=='], {
-                            attrs: {
-                                href: '#test'
-                            }
-                        })
-                    ]
-                );
-            },
             handleSizeChange(val) {
                 this.pageSize = val;
                 this.getBanners();
@@ -179,16 +213,17 @@
 			},
             handleRemove(file, fileList) {
                 console.log(file, fileList);
-                this.addForm.imgUrl = '';
+                this.addForm.filename = '';
             },
             handleSuccess(res) {
-                this.addForm.imgUrl = res.data;
+                this.addForm.filename = res.data.filename;
+                this.addForm.newFilename = res.data.newFilename;
             },
             handleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
 			},
             handleBefore(file){
-                if (this.addForm.imgUrl) {
+                if (this.addForm.filename) {
                     this.$message.warning(`只能上传 1 个文件`);
                     return false;
 				}
@@ -198,19 +233,23 @@
 				let para = {
                     pageNum: this.page,
                     pageSize: this.pageSize,
-					imgDesc: this.filters.imgDesc
+                    bannerDesc: this.filters.bannerDesc
 				};
 				this.listLoading = true;
-				//NProgress.start();
+
                 getBannerList(para).then((res) => {
                     let data = res.data.data;
 					this.total = data.total;
 					this.pageSize = data.pageSize;
-					this.imgs = data.list;
+					this.banners = data.list;
 					this.listLoading = false;
-					//NProgress.done();
 				});
 			},
+            imgRowRender: function (row) {
+                var id = row.appendixId;
+                var url = this.downloadUrl + "?id=" + id + "&size=80";
+				return "<div class=\"zoomImage\" style=\"background-image:url("+ url +");\"></div>";
+            },
             //时间格式化
             dateFormat: function(row, column) {
                 var date = row[column.property];
@@ -219,16 +258,24 @@
                 }
                 return util.formatDate.format(new Date(date), 'yyyy-MM-dd hh:mm:ss');
             },
+            typeFormat: function (row, column) {
+                var type = row[column.property];
+                var name = "未知";
+                this.bannerType.forEach((item, index) => {
+                    if (item.value == type) {
+                        name = item.label;
+					}
+                });
+                return name;
+            },
         	//删除
 			handleDel: function (index, row) {
 				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
 					this.listLoading = true;
-					//NProgress.start();
-                    deleteBanner(row.imgId).then((res) => {
+                    deleteBanner(row.bannerId).then((res) => {
 						this.listLoading = false;
-						//NProgress.done();
 						this.$message({
 							message: '删除成功',
 							type: 'success'
@@ -248,11 +295,13 @@
 			},
 			//显示新增界面
 			handleAdd: function () {
-				this.addFormVisible = true;
+				/*this.addFormVisible = true;
 				this.addForm = {
-                    imgDesc: '',
-                    imgUrl: ''
-				};
+                    bannerDesc: '',
+                    filename: '',
+                    newFilename: ''
+				};*/
+                this.$router.push({ path: '/addBanner' });
 			},
 			//编辑
 			editSubmit: function () {
@@ -260,11 +309,9 @@
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.editLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
                             editBanner(para).then((res) => {
 								this.editLoading = false;
-								//NProgress.done();
 								this.$message({
 									message: '提交成功',
 									type: 'success'
@@ -283,11 +330,11 @@
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.addLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-                            addBanner(para).then((res) => {
+							let oldfilename = this.addForm.filename;
+							let newFilename = this.addForm.newFilename;
+                            addBanner(oldfilename, newFilename, para).then((res) => {
 								this.addLoading = false;
-								//NProgress.done();
 								this.$message({
 									message: '提交成功',
 									type: 'success'
@@ -305,15 +352,13 @@
 			},
 			//批量删除
 			batchRemove: function () {
-				var ids = this.sels.map(item => item.imgId).toString();
+				var ids = this.sels.map(item => item.bannerId).toString();
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
 					this.listLoading = true;
-					//NProgress.start();
                     deleteBanners(ids).then((res) => {
 						this.listLoading = false;
-						//NProgress.done();
 						this.$message({
 							message: '删除成功',
 							type: 'success'
@@ -332,7 +377,7 @@
 
 </script>
 
-<style scoped>
+<style>
 	.zoomImage{
 		width:100%;
 		height:0;

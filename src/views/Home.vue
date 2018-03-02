@@ -54,8 +54,8 @@
 				<div class="grid-content bg-purple-light">
 					<el-col :span="24" class="breadcrumb-container">
 						<strong class="title">{{$route.name}}</strong>
-						<el-breadcrumb separator="/" class="breadcrumb-inner">
-							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
+						<el-breadcrumb class="breadcrumb-inner" separator-class="el-icon-arrow-right">
+							<el-breadcrumb-item v-for="item in $route.matched" :to="{ path: '/' }">
 								{{ item.name }}
 							</el-breadcrumb-item>
 						</el-breadcrumb>
