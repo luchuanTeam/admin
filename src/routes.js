@@ -1,16 +1,14 @@
 import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
-import Main from './views/Main.vue'
-import Table from './views/nav2/Table.vue'
-import Banners from './views/banner/Banners.vue'
-import Form from './views/nav2/Form.vue'
-import user from './views/nav2/user.vue'
-import Page4 from './views/nav2/Page4.vue'
-import Page5 from './views/nav2/Page5.vue'
-import Page6 from './views/nav3/Page6.vue'
 import echarts from './views/charts/echarts.vue'
+import Banners from './views/banner/Banners.vue'
 import AddBanner from './views/banner/AddBanner.vue'
+import Movies from './views/movie/Movies.vue'
+import AddMovie from './views/movie/AddMovie.vue'
+import Episodes from './views/movie/Episodes.vue'
+import AddEpisode from './views/movie/AddEpisode.vue'
+
 
 let routes = [
     {
@@ -25,51 +23,35 @@ let routes = [
         name: '',
         hidden: true
     },
-    //{ path: '/main', component: Main },
     {
         path: '/',
         component: Home,
-        name: 'Banner管理',
-        iconCls: 'el-icon-message',//图标样式class
+        iconCls: 'el-icon-picture',
+        leaf: true,
         children: [
-            //{ path: '/main', component: Main, name: '主页', hidden: true },
-            { path: '/banners', component: Banners, name: '图片列表' },
-            {
-                path: '/addBanner',
-                component: AddBanner,
-                name: '新增',
-                hidden: true
-            }
-            //{ path: '/form', component: Form, name: '表单' }
+            { path: '/banners', component: Banners, name: '图片管理' },
+            { path: '/addBanner', component: AddBanner, name: '新增图片', hidden: true }
         ]
     },
     {
         path: '/',
         component: Home,
-        name: '用户管理',
-        iconCls: 'fa fa-id-card-o',
-        leaf: true,//只有一个节点
+        iconCls: 'el-icon-upload',
+        leaf: true,
         children: [
-            { path: '/user', component: user, name: '用户列表' }
+            { path: '/movies', component: Movies, name: '视频管理' },
+            { path: '/addMovie', component: AddMovie, name: '添加视频' },
+            { path: '/episodes', component: Episodes, name: '视频集' },
+            { path: '/addEpisode', component: AddEpisode, name: '添加视频集' }
         ]
     },
-    // {
-    //     path: '/',
-    //     component: Home,
-    //     name: '',
-    //     iconCls: 'fa fa-address-card',
-    //     leaf: true,//只有一个节点
-    //     children: [
-    //         { path: '/page6', component: Page6, name: '导航三' }
-    //     ]
-    // },
     {
         path: '/',
         component: Home,
-        name: 'Charts',
+        name: '统计报表',
         iconCls: 'fa fa-bar-chart',
         children: [
-            { path: '/echarts', component: echarts, name: 'echarts' }
+            { path: '/echarts', component: echarts, name: '视频报表' }
         ]
     },
     {

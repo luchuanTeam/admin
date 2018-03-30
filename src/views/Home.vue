@@ -54,8 +54,8 @@
 				<div class="grid-content bg-purple-light">
 					<el-col :span="24" class="breadcrumb-container">
 						<strong class="title">{{$route.name}}</strong>
-						<el-breadcrumb class="breadcrumb-inner" separator-class="el-icon-arrow-right">
-							<el-breadcrumb-item v-for="item in $route.matched" :to="{ path: '/' }">
+						<el-breadcrumb separator="/" class="breadcrumb-inner">
+							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
 								{{ item.name }}
 							</el-breadcrumb-item>
 						</el-breadcrumb>
@@ -75,7 +75,7 @@
 	export default {
 		data() {
 			return {
-				sysName:'VUEADMIN',
+				sysName:'后台管理系统',
 				collapsed:false,
 				sysUserName: '',
 				sysUserAvatar: '',
@@ -130,7 +130,7 @@
 			if (user) {
 				user = JSON.parse(user);
 				this.sysUserName = user.name || '';
-				this.sysUserAvatar = user.avatar || '';
+				this.sysUserAvatar = user.avatar || 'http://www.yanda123.com/app/people.png';
 			}
 
 		}
