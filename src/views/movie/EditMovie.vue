@@ -2,20 +2,15 @@
     <section>
         <!--新增界面-->
         <el-row style="margin: 20px 0;">
-            <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+            <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
                 <el-form-item label="视频名称" prop="mvName">
-                    <el-input v-model="addForm.mvName" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.mvName" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="视频简介" prop="mvIntro">
-                    <el-input type="textarea" v-model="addForm.mvIntro" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.mvIntro" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="分类" prop="classifyId">
-                    <el-cascader
-                            @change="selectChange"
-                            :options="classifies"
-                            @active-item-change="handleItemChange"
-                            :props="props"
-                    ></el-cascader>
+                <el-form-item label="分类" prop="classifyName">
+                    <el-input v-model="editForm.classifyName" :disabled=true auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="图片上传" prop="filename">
                     <el-upload
@@ -25,6 +20,7 @@
                             :on-success="handleSuccess"
                             :on-remove="handleRemove"
                             limit="1"
+                            :file-list="fileList"
                             :on-exceed="handleExceed"
                             :before-upload="handleBefore"
                             list-type="picture">
@@ -34,7 +30,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button @click.native="turnBack">返回</el-button>
-                    <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+                    <el-button type="primary" @click.native="editSubmit" :loading="addLoading">提交</el-button>
                 </el-form-item>
             </el-form>
         </el-row>
@@ -43,21 +39,21 @@
 
 <script>
     import util from '../../common/js/util'
-    import { addMovie, getClassify, getClassifyById, context } from '../../api/api';
+    import { getMovie, editMovie, getClassify, getClassifyById, context } from '../../api/api';
 
     import moment from 'moment/moment';
 
     export default {
         data() {
-            var classifyValidate = (rule, value, callback) => {
+            /*var classifyValidate = (rule, value, callback) => {
                 if (value.length == 0) {
                     callback(new Error('请选择视频分类'));
                 } else {
                     callback();
                 }
-            };
+            };*/
             var imgValidate = (rule, value, callback) => {
-                if (this.addForm.filename == '') {
+                if (this.editForm.filename == '') {
                     callback(new Error('图片未上传'));
                 } else {
                     callback();
@@ -65,34 +61,35 @@
             };
             return {
                 classifies: [],
+                fileList: [],
                 props: {
                     value: 'id',
                     children: 'classify'
                 },
                 addLoading: false,
-                addFormRules: {
+                editFormRules: {
                     mvName: [
                         { required: true, message: '请输入视频名称', trigger: 'blur' }
                     ],
                     mvIntro: [
                         { required: true, message: '请输入视频简介', trigger: 'blur' }
-                    ],
+                    ]/*,
                     filename: [
                         { required: true, message: '图片未上传', trigger: 'blur', validator: imgValidate }
                     ],
                     classifyId: [
                         { required: true, message: '请选择视频分类', trigger: 'blur', validator: classifyValidate }
-                    ]
+                    ]*/
                 },
                 //新增界面数据
-                addForm: {
+                editForm: {
+                    mvId: this.$route.query.mvId,
                     mvName: '',
                     mvIntro: '',
-                    classifyId: '',
+                    //classifyId: '',
                     classifyName: '',
                     filename: '',
                     newFilename: '',
-
                 },
                 loading: false,
                 uploadUrl: context + '/attach/doImgUpload',
@@ -105,23 +102,23 @@
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
-                this.addForm.filename = '';
-                this.addForm.newFilename = '';
+                this.editForm.filename = '';
+                this.editForm.newFilename = '';
             },
             handleSuccess(res) {
-                this.addForm.filename = res.data.filename;
-                this.addForm.newFilename = res.data.newFilename;
+                this.editForm.filename = res.data.filename;
+                this.editForm.newFilename = res.data.newFilename;
             },
             handleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             },
             handleBefore(file){
-                if (this.addForm.filename) {
+                if (this.editForm.filename) {
                     this.$message.warning(`只能上传 1 个文件`);
                     return false;
                 }
             },
-            handleItemChange(val) {
+            /*handleItemChange(val) {
                 for (var item of this.classifies) {
                     if (item.id == val && item.classify.length == 0) {
                         getClassifyById(val).then((res) => {
@@ -133,41 +130,26 @@
                         break;
                     }
                 }
-            },
-            selectChange(val) {
-                var path = '';
-                this.addForm.classifyId = val[1];
-                for (var item of this.classifies) {
-                    if (item.id === val[0]) {
-                        path = item.label;
-                        for (var child of item.classify) {
-                            if (child.id === val[1]) {
-                                path += '/' + child.label;
-                                break;
-                            }
-                        }
-                        break;
-                    }
-
-                }
-                this.addForm.classifyName = path;
-            },
+            },*/
+            /*selectChange(val) {
+                this.editForm.classifyId = val[1];
+            },*/
             //新增
-            addSubmit: function () {
-                this.$refs.addForm.validate((valid) => {
+            editSubmit: function () {
+                this.$refs.editForm.validate((valid) => {
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
                             this.addLoading = true;
-                            let para = Object.assign({}, this.addForm);
-                            let oldFilename = this.addForm.filename;
-                            let newFilename = this.addForm.newFilename;
-                            addMovie(oldFilename, newFilename, para).then((res) => {
+                            let para = Object.assign({}, this.editForm);
+                            let oldFilename = this.editForm.filename;
+                            let newFilename = this.editForm.newFilename;
+                            editMovie(oldFilename, newFilename, para).then((res) => {
                                 this.addLoading = false;
                                 this.$message({
                                     message: '提交成功',
                                     type: 'success'
                                 });
-                                this.$refs['addForm'].resetFields();
+                                this.$refs['editForm'].resetFields();
                                 this.$refs.upload.clearFiles();
                             });
                         });
@@ -178,7 +160,14 @@
         mounted() {
             getClassify().then((res) => {
                 this.classifies = res.data;
-            })
+            });
+            getMovie(this.$route.query.mvId).then((res) => {
+                if(res.data) {
+                    this.editForm.mvName = res.data.mvName;
+                    this.editForm.mvIntro = res.data.mvIntro;
+                    this.editForm.classifyName = res.data.classifyName;
+                }
+            });
         }
     }
 

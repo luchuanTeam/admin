@@ -2,54 +2,83 @@ import axios from 'axios';
 
 let base = '';
 
-//export const context = 'http://localhost/yanda';
-export const context = 'http://www.yanda123.com/yanda';
+// create an axios instance
+const request = axios.create({
+    baseURL: process.env.BASE_API, // api的base_url
+    timeout: 5000 // request timeout
+});
 
-export const requestLogin = params => { return axios.post(`${context}/login`, params).then(res => res.data); };
+export const requestLogin = params => { return request.post(`/user/login`, params).then(res => res.data); };
+
+export const requestRegister = params => { return request.post(`/user/register`, params).then(res => res.data); };
 
 /**************** 轮播图相关接口 ****************/
-export const getBannerList = params => { return axios.get(`${context}/banner/list`, { params: params }); };
+export const getBannerList = params => { return request.get(`/banner/list`, { params: params }); };
 
-export const editBanner = params => { return axios.post(`${context}/banner/update`, params ); };
+export const editBanner = params => { return request.post(`/banner/update`, params ); };
 
-export const deleteBanner = params => { return axios.post(`${context}/banner/delete/${params}`); };
+export const deleteBanner = params => { return request.post(`/banner/delete/${params}`); };
 
-export const deleteBanners = params => { return axios.post(`${context}/banner/batchDelete/${params}`); };
+export const deleteBanners = params => { return request.post(`/banner/batchDelete/${params}`); };
 
-export const addBanner = (oldFilename, newFilename, params) => { return axios.post(`${context}/banner/add?oldFilename=${oldFilename}&newFilename=${newFilename}`, params ); };
+export const addBanner = (oldFilename, newFilename, params) => { return request.post(`/banner/add?oldFilename=${oldFilename}&newFilename=${newFilename}`, params ); };
 
 /**************** 视频相关接口 ****************/
-export const getMovieList = params => { return axios.get(`${context}/movie/list`, { params: params }); };
+export const getMovieList = params => { return request.get(`/movie/list`, { params: params }); };
 
-export const editMovie = params => { return axios.post(`${context}/movie/update`, params ); };
+export const editMovie = (oldFilename, newFilename, params) => { return request.post(`/movie/update?oldFilename=${oldFilename}&newFilename=${newFilename}`, params ); };
 
-export const deleteMovie = params => { return axios.post(`${context}/movie/delete/${params}`); };
+export const getMovie = params => { return request.get(`/movie/${params}`); };
 
-export const addMovie = (oldFilename, newFilename, params) => { return axios.post(`${context}/movie/add?oldFilename=${oldFilename}&newFilename=${newFilename}`, params ); };
+export const deleteMovie = params => { return request.post(`/movie/delete/${params}`); };
 
-export const getEpisodeList = params => { return axios.get(`${context}/episode/list`, { params: params }); };
+export const addMovie = (oldFilename, newFilename, params) => { return request.post(`/movie/add?oldFilename=${oldFilename}&newFilename=${newFilename}`, params ); };
+
+export const pubMovie = params => { return request.post(`/movie/pub`, params); };
+
+/**************** 视频集相关接口 ****************/
+export const getEpisodeList = params => { return request.get(`/episode/list`, { params: params }); };
+
+export const getEpisode = params => { return request.get(`/episode/getEpisode`, { params: params }); };
+
+export const getEpisodeById = params => { return request.get(`/episode/${params}`); };
 
 export const addEpisode = (filePara, params) => {
-    return axios.post(`${context}/episode/add?oldFilename=${filePara.imgFilename}&newFilename=${filePara.imgNewFilename}&mvOldFilename=${filePara.mvFilename}&mvNewFilename=${filePara.mvNewFilename}`, params);
+    return request.post(`/episode/add?oldFilename=${filePara.imgFilename}&newFilename=${filePara.imgNewFilename}&mvOldFilename=${filePara.mvFilename}&mvNewFilename=${filePara.mvNewFilename}`, params);
 };
 
-export const deleteEpisode = params => { return axios.post(`${context}/episode/delete/${params}`); };
+export const editEpisode = (filePara, params) => {
+    return request.post(`/episode/update?oldFilename=${filePara.imgFilename}&newFilename=${filePara.imgNewFilename}&mvOldFilename=${filePara.mvFilename}&mvNewFilename=${filePara.mvNewFilename}`, params)
+};
 
-export const deleteEpisodes = params => { return axios.post(`${context}/episode/batchDelete/${params}`); };
+export const deleteEpisode = params => { return request.post(`/episode/delete/${params}`); };
 
-export const getClassify = () => { return axios.get(`${context}/movie/getClassify`); };
+export const deleteEpisodes = params => { return request.post(`/episode/batchDelete/${params}`); };
 
-export const getClassifyById = (id) => { return axios.get(`${context}/movie/getClassify/${id}`); };
+/**************** 分类相关接口 ****************/
+export const getClassify = () => { return request.get(`/movie/getClassify`); };
+
+export const getClassifyById = (id) => { return request.get(`/movie/getClassify/${id}`); };
 
 /**************** 用户相关接口 ****************/
-export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
+export const getUserList = params => { return request.get(`/user/list`, { params: params }); };
 
-export const getUserListPage = params => { return axios.get(`${base}/user/listpage`, { params: params }); };
+export const getUserListPage = params => { return request.get(`/user/listpage`, { params: params }); };
 
-export const removeUser = params => { return axios.get(`${base}/user/remove`, { params: params }); };
+export const removeUser = params => { return request.get(`/user/remove`, { params: params }); };
 
-export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
+export const batchRemoveUser = params => { return request.get(`/user/batchremove`, { params: params }); };
 
-export const editUser = params => { return axios.get(`${base}/user/edit`, { params: params }); };
+export const editUser = params => { return request.post(`/user/update`, params ); };
 
-export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
+export const addUser = params => { return request.get(`/user/add`, { params: params }); };
+
+export const getRoleList = () => { return request.get(`/role/list`); };
+
+export const getUserRoleList = (id) => { return request.get(`/role/user/${id}`); };
+
+export const updateUserRole = (userId, roleIds) => { return request.post(`/role/user/update/${userId}`, roleIds); };
+
+
+/**************** 统计报表相关接口 ****************/
+export const getClassifyMvCount = () => { return request.get(`/report/classifyMvCount`); };

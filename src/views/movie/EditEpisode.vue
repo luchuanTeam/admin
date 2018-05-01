@@ -2,15 +2,15 @@
     <section>
         <!--新增界面-->
         <el-row style="margin: 20px 0;">
-            <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+            <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
                 <el-form-item label="视频名称" prop="episodeName">
-                    <el-input v-model="addForm.episodeName" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.episodeName" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="视频简介" prop="episodeIntro">
-                    <el-input v-model="addForm.episodeIntro" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.episodeIntro" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="视频集数" prop="episodeNum">
-                    <el-input v-model="addForm.episodeNum" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.episodeNum" auto-complete="off"></el-input>
                 </el-form-item>
                 <!--图片上传-->
                 <el-form-item label="图片上传" prop="imgFilename">
@@ -43,10 +43,9 @@
                         <div slot="tip" class="el-upload__tip">只能上传mp4文件，且不超过50MB</div>
                     </el-upload>
                 </el-form-item>
-
                 <el-form-item>
                     <el-button @click.native="turnBack">返回</el-button>
-                    <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+                    <el-button type="primary" @click.native="editSubmit" :loading="addLoading">提交</el-button>
                 </el-form-item>
             </el-form>
         </el-row>
@@ -55,101 +54,32 @@
 
 <script>
     import util from '../../common/js/util'
-    import qs from 'qs'
-    import { addEpisode, getMovie, context } from '../../api/api';
+    import { getEpisodeById, editEpisode, context } from '../../api/api';
 
     import moment from 'moment/moment';
 
     export default {
         data() {
-            var checkImg = (rule, value, callback) => {
-                if (this.imgFilename == '') {
-                    callback(new Error('图片未上传'));
-                }
-                callback();
-            };
-            var checkVideo = (rule, value, callback) => {
-                if (this.mvFilename == '') {
-                    callback(new Error('视频未上传'));
-                }
-                callback();
-            };
             return {
-                classifies: [
-                    {
-                        value: '1',
-                        label: '胎教',
-                        children: [
-                            {
-                                value: '9',
-                                label: '胎教音乐'
-                            },
-                            {
-                                value: '10',
-                                label: '国学胎教（音频）'
-                            }
-                        ]
-                    },
-                    {
-                        value: '2',
-                        label: '早教',
-                        children: [
-                            {
-                                value: '11',
-                                label: '育儿课'
-                            },
-                            {
-                                value: '12',
-                                label: '亲子课'
-                            }
-                        ]
-                    },
-                    {
-                        value: '3',
-                        label: '幼教'
-                    },
-                    {
-                        value: '4',
-                        label: '小学课程'
-                    },
-                    {
-                        value: '5',
-                        label: '初中课程'
-                    },
-                    {
-                        value: '6',
-                        label: '高中课程'
-                    },
-                    {
-                        value: '7',
-                        label: '国学'
-                    },
-                    {
-                        value: '8',
-                        label: '手工教程'
-                    }
-                ],
+                fileList: [],
+                props: {
+                    value: 'id',
+                    children: 'classify'
+                },
                 addLoading: false,
-                addFormRules: {
+                editFormRules: {
                     episodeName: [
                         { required: true, message: '请输入视频名称', trigger: 'blur' }
                     ],
-                    episodeCount: [
-                        { required: true, message: '请输入视频当前集数', trigger: 'blur' }
-                    ],
-                    imgFilename: [
-                        { required: true, trigger: 'blur', validator: checkImg }
-                    ],
-                    mvFilename: [
-                        { required: true, trigger: 'blur', validator: checkVideo }
+                    episodeIntro: [
+                        { required: true, message: '请输入视频简介', trigger: 'blur' }
                     ]
                 },
                 //新增界面数据
-                addForm: {
+                editForm: {
+                    episodeId: this.$route.query.episodeId,
                     episodeName: '',
-                    episodeIntro: '',
-                    episodeNum: '',
-                    mvId: this.$route.query.mvId
+                    episodeIntro: ''
                 },
                 imgFilename: '',
                 imgNewFilename: '',
@@ -197,28 +127,25 @@
                 console.log(file);
             },
             //新增
-            addSubmit: function () {
-                this.$refs.addForm.validate((valid) => {
+            editSubmit: function () {
+                this.$refs.editForm.validate((valid) => {
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
                             this.addLoading = true;
-                            let para = Object.assign({}, this.addForm);
+                            let para = Object.assign({}, this.editForm);
                             let filePara = {
                                 imgFilename: this.imgFilename,
                                 imgNewFilename: this.imgNewFilename,
                                 mvFilename: this.mvFilename,
                                 mvNewFilename: this.mvNewFilename
                             };
-                            addEpisode(filePara, para).then((res) => {
+                            editEpisode(filePara, para).then((res) => {
                                 this.addLoading = false;
                                 if (res.data.status == 200) {
                                     this.$message({
                                         message: '提交成功',
                                         type: 'success'
                                     });
-                                    this.$refs['addForm'].resetFields();
-                                    this.$refs.upload2.clearFiles();
-                                    this.$refs.upload.clearFiles();
                                 } else {
                                     this.$message({
                                         message: res.data.message || '提交失败',
@@ -229,12 +156,14 @@
                         });
                     }
                 });
-            },
+            }
         },
         mounted() {
-            getMovie(this.$route.query.mvId).then((res) => {
+            getEpisodeById(this.$route.query.episodeId).then((res) => {
                 if(res.data) {
-                    this.addForm.episodeNum = res.data.episodeCount + 1;
+                    this.editForm.episodeName = res.data.episodeName;
+                    this.editForm.episodeIntro = res.data.episodeIntro;
+                    this.editForm.episodeNum = res.data.episodeNum;
                 }
             });
         }

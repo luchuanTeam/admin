@@ -1,19 +1,29 @@
 import Login from './views/Login.vue'
+import Register from './views/Register.vue'
 import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
-import echarts from './views/charts/echarts.vue'
+import Reports from './views/charts/Reports.vue'
 import Banners from './views/banner/Banners.vue'
 import AddBanner from './views/banner/AddBanner.vue'
 import Movies from './views/movie/Movies.vue'
 import AddMovie from './views/movie/AddMovie.vue'
+import EditMovie from './views/movie/EditMovie.vue'
 import Episodes from './views/movie/Episodes.vue'
 import AddEpisode from './views/movie/AddEpisode.vue'
+import EditEpisode from './views/movie/EditEpisode.vue'
+import Users from './views/user/Users.vue'
 
 
 let routes = [
     {
         path: '/login',
         component: Login,
+        name: '',
+        hidden: true
+    },
+    {
+        path: '/register',
+        component: Register,
         name: '',
         hidden: true
     },
@@ -41,8 +51,20 @@ let routes = [
         children: [
             { path: '/movies', component: Movies, name: '视频管理' },
             { path: '/addMovie', component: AddMovie, name: '添加视频' },
+            { path: '/editMovie', component: EditMovie, name: '编辑视频' },
             { path: '/episodes', component: Episodes, name: '视频集' },
-            { path: '/addEpisode', component: AddEpisode, name: '添加视频集' }
+            { path: '/addEpisode', component: AddEpisode, name: '添加视频集' },
+            { path: '/editEpisode', component: EditEpisode, name: '编辑视频集' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '用户管理',
+        iconCls: 'fa fa-user-o',
+        leaf: true,
+        children: [
+            { path: '/users', component: Users, name: '用户列表' }
         ]
     },
     {
@@ -51,7 +73,7 @@ let routes = [
         name: '统计报表',
         iconCls: 'fa fa-bar-chart',
         children: [
-            { path: '/echarts', component: echarts, name: '视频报表' }
+            { path: '/echarts', component: Reports, name: '视频报表' }
         ]
     },
     {

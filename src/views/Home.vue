@@ -129,7 +129,7 @@
 			var user = sessionStorage.getItem('user');
 			if (user) {
 				user = JSON.parse(user);
-				this.sysUserName = user.name || '';
+				this.sysUserName = user.userName || '';
 				this.sysUserAvatar = user.avatar || 'http://www.yanda123.com/app/people.png';
 			}
 

@@ -142,7 +142,7 @@
             },
             //显示编辑界面
             handleEdit: function (index, row) {
-                this.$router.push({ path: '/editEpisode', query: { episode: row.episodeId } });
+                this.$router.push({ path: '/editEpisode', query: { episodeId: row.episodeId } });
             },
             //显示新增界面
             handleAdd: function () {

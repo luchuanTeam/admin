@@ -105,9 +105,6 @@
 				<el-form-item label="图片地址" prop="filename">
 					<el-input v-model="addForm.filename" :disabled=true></el-input>
 				</el-form-item>
-				<el-form-item label="关联电影" prop="mvId">
-					<el-tree :data="movies" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="addFormVisible = false">取消</el-button>

@@ -4,7 +4,7 @@
         <el-row style="margin: 20px 0;">
         <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
             <el-form-item label="图片描述" prop="bannerDesc">
-                <el-input v-model="addForm.bannerDesc" auto-complete="off"></el-input>
+                <el-input type="textarea" v-model="addForm.bannerDesc" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="图片性质" prop="type" >
                 <el-radio-group @change="selectChange" v-model="addForm.type">

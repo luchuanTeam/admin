@@ -25,8 +25,6 @@
             </el-table-column>
             <el-table-column prop="mvIntro" label="视频简介" sortable>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" :formatter="dateFormat" sortable>
-            </el-table-column>
             <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
             </el-table-column>
             <el-table-column prop="classifyName" label="分类" sortable>
@@ -38,9 +36,13 @@
                     <div v-html="imgRowRender(scope.row)"></div>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" width="150">
+            <el-table-column label="操作" width="280">
                 <template scope="scope">
-                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)">管理</el-button>
+                    <el-button :type="scope.row.isPublic ? 'danger':'primary'" size="small" @click="handlePub(scope.$index, scope.row)">
+                        {{ scope.row.isPublic ? '撤销发布' : '发布' }}
+                    </el-button>
+                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button size="small" @click="handleManage(scope.$index, scope.row)">管理</el-button>
                     <el-button type="danger" :disabled="scope.row.episodeCount > 0" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -57,9 +59,9 @@
 
 <script>
     import util from '../../common/js/util'
-    import { getMovieList, deleteMovie, deleteMovies, context } from '../../api/api';
-
+    import { getMovieList, deleteMovie, deleteMovies, pubMovie, context } from '../../api/api';
     import moment from 'moment/moment';
+    import Qs from 'qs';
 
     export default {
         data() {
@@ -134,9 +136,43 @@
 
                 });
             },
+            //显示管理界面
+            handleManage: function (index, row) {
+                this.$router.push({ path: '/episodes', query: { mvId: row.mvId } });
+            },
+            //发布管理
+            handlePub: function (index, row) {
+                let tips = row.isPublic ? '撤销发布' : '发布';
+                this.$confirm('确认' + tips + '该视频吗?', '提示', {
+                    type: 'warning'
+                }).then(() => {
+                    this.listLoading = true;
+                    let para = {
+                        mvId: row.mvId,
+                        isPublic: row.isPublic ? 0 : 1
+                    };
+                    pubMovie(Qs.stringify(para)).then((res) => {
+                        this.listLoading = false;
+                        if (res.data.status == 200) {
+                            this.$message({
+                                message: tips+ '成功',
+                                type: 'success'
+                            });
+                            this.getList();
+                        } else {
+                            this.$message({
+                                message: res.data.message,
+                                type: 'error'
+                            });
+                        }
+                    });
+                }).catch(() => {
+
+                });
+            },
             //显示编辑界面
             handleEdit: function (index, row) {
-                this.$router.push({ path: '/episodes', query: { mvId: row.mvId } });
+                this.$router.push({ path: '/editMovie', query: { mvId: row.mvId } });
             },
             //显示新增界面
             handleAdd: function () {

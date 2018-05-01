@@ -1,11 +1,8 @@
 <template>
     <section class="chart-container">
         <el-row>
-            <el-col :span="12">
+            <el-col :span="24">
                 <div id="chartColumn" style="width:100%; height:400px;"></div>
-            </el-col>
-            <el-col :span="12">
-                <div id="chartBar" style="width:100%; height:400px;"></div>
             </el-col>
             <el-col :span="12">
                 <div id="chartLine" style="width:100%; height:400px;"></div>
@@ -22,6 +19,7 @@
 
 <script>
     import echarts from 'echarts'
+    import { getClassifyMvCount } from '../../api/api';
 
     export default {
         data() {
@@ -36,63 +34,25 @@
         methods: {
             drawColumnChart() {
                 this.chartColumn = echarts.init(document.getElementById('chartColumn'));
-                this.chartColumn.setOption({
-                  title: { text: 'Column Chart' },
-                  tooltip: {},
-                  xAxis: {
-                      data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
-                  },
-                  yAxis: {},
-                  series: [{
-                      name: '销量',
-                      type: 'bar',
-                      data: [5, 20, 36, 10, 10, 20]
-                    }]
-                });
-            },
-            drawBarChart() {
-                this.chartBar = echarts.init(document.getElementById('chartBar'));
-                this.chartBar.setOption({
-                    title: {
-                        text: 'Bar Chart',
-                        subtext: '数据来自网络'
-                    },
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'shadow'
-                        }
-                    },
-                    legend: {
-                        data: ['2011年', '2012年']
-                    },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis: {
-                        type: 'value',
-                        boundaryGap: [0, 0.01]
-                    },
-                    yAxis: {
-                        type: 'category',
-                        data: ['巴西', '印尼', '美国', '印度', '中国', '世界人口(万)']
-                    },
-                    series: [
-                        {
-                            name: '2011年',
-                            type: 'bar',
-                            data: [18203, 23489, 29034, 104970, 131744, 630230]
+
+                getClassifyMvCount().then((res) => {
+
+                    this.chartColumn.setOption({
+                        title: { text: '视频分类统计' },
+                        tooltip: {},
+                        xAxis: {
+                            data: res.data.column
                         },
-                        {
-                            name: '2012年',
+                        yAxis: {},
+                        series: [{
+                            name: '视频数量',
                             type: 'bar',
-                            data: [19325, 23438, 31000, 121594, 134141, 681807]
-                        }
-                    ]
+                            data: res.data.row
+                        }]
+                    });
+
                 });
+
             },
             drawLineChart() {
                 this.chartLine = echarts.init(document.getElementById('chartLine'));
@@ -185,7 +145,6 @@
             },
             drawCharts() {
                 this.drawColumnChart()
-                this.drawBarChart()
                 this.drawLineChart()
                 this.drawPieChart()
             },
