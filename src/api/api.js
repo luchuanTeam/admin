@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-let base = '';
+export const context = process.env.BASE_API;
 
 // create an axios instance
 const request = axios.create({
@@ -59,6 +58,18 @@ export const deleteEpisodes = params => { return request.post(`/episode/batchDel
 export const getClassify = () => { return request.get(`/movie/getClassify`); };
 
 export const getClassifyById = (id) => { return request.get(`/movie/getClassify/${id}`); };
+
+export const getOneClassifyList = params => { return request.get(`/classify/list`, { params: params }); };
+
+export const getTwoClassifyById = params => { return request.get(`/classify/getClassifyById`, { params: params }); };
+
+export const editClassify = params => { return request.post(`/classify/update`, params ); };
+
+export const addClassify = params => { return request.post(`/classify/add`, params); };
+
+export const deleteClassify = params => { return request.post(`/banner/delete/${params}`); };
+
+export const deleteClassifies = params => { return request.post(`/banner/batchDelete/${params}`); };
 
 /**************** 用户相关接口 ****************/
 export const getUserList = params => { return request.get(`/user/list`, { params: params }); };

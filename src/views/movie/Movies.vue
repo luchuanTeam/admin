@@ -86,7 +86,7 @@
             },
             handleCurrentChange(val) {
                 this.page = val;
-                this.getBanners();
+                this.getList();
             },
             //获取用户列表
             getList() {

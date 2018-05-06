@@ -12,6 +12,8 @@ import Episodes from './views/movie/Episodes.vue'
 import AddEpisode from './views/movie/AddEpisode.vue'
 import EditEpisode from './views/movie/EditEpisode.vue'
 import Users from './views/user/Users.vue'
+import One from './views/classify/OneLevel.vue'
+import Two from './views/classify/TwoLevel.vue'
 
 
 let routes = [
@@ -65,6 +67,17 @@ let routes = [
         leaf: true,
         children: [
             { path: '/users', component: Users, name: '用户列表' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '分类管理',
+        iconCls: 'fa fa-th-large',
+        leaf: true,
+        children: [
+            { path: '/oneLev', component: One, name: '一级分类列表' },
+            { path: '/twoLev', component: Two, name: '二级分类列表' }
         ]
     },
     {

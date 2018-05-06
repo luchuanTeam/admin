@@ -139,7 +139,6 @@
             //显示编辑界面
             handleEdit: function (index, row) {
                 this.editFormVisible = true;
-                this.editFormVisible = true;
                 this.editForm.userId = row.userId;
                 this.editForm.nickName = row.nickName;
                 this.editForm.sex = row.sex;
