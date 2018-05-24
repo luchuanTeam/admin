@@ -17,6 +17,14 @@
                             :props="props"
                     ></el-cascader>
                 </el-form-item>
+
+                <!--是否需要vip-->
+                <el-form-item label="视频权限" prop="vipType" >
+                    <el-radio-group v-model="addForm.vipType">
+                        <el-radio v-for="item in vipType" :label="item.value">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+
                 <el-form-item label="图片上传" prop="filename">
                     <el-upload
                             class="upload-demo"
@@ -65,6 +73,16 @@
             };
             return {
                 classifies: [],
+                vipType: [
+                    {
+                        value: 0,
+                        label: '普通会员'
+                    },
+                    {
+                        value: 1,
+                        label: 'vip会员'
+                    }
+                ],
                 props: {
                     value: 'id',
                     children: 'classify'
@@ -92,7 +110,7 @@
                     classifyName: '',
                     filename: '',
                     newFilename: '',
-
+                    vipType: 0
                 },
                 loading: false,
                 uploadUrl: context + '/attach/doImgUpload',
@@ -109,8 +127,17 @@
                 this.addForm.newFilename = '';
             },
             handleSuccess(res) {
-                this.addForm.filename = res.data.filename;
-                this.addForm.newFilename = res.data.newFilename;
+
+                if (res.status == 200) {
+                    this.addForm.filename = res.data.filename;
+                    this.addForm.newFilename = res.data.newFilename;
+                } else {
+                    this.$message({
+                        message: res.message || '提交失败',
+                        type: 'error'
+                    });
+                }
+
             },
             handleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
@@ -163,12 +190,20 @@
                             let newFilename = this.addForm.newFilename;
                             addMovie(oldFilename, newFilename, para).then((res) => {
                                 this.addLoading = false;
-                                this.$message({
-                                    message: '提交成功',
-                                    type: 'success'
-                                });
-                                this.$refs['addForm'].resetFields();
-                                this.$refs.upload.clearFiles();
+                                if (res.data.status == 200) {
+                                    this.$message({
+                                        message: '提交成功',
+                                        type: 'success'
+                                    });
+                                    this.$refs['addForm'].resetFields();
+                                    this.$refs.upload.clearFiles();
+                                    this.turnBack();
+                                } else {
+                                    this.$message({
+                                        message: res.data.message || '提交失败',
+                                        type: 'error'
+                                    });
+                                }
                             });
                         });
                     }

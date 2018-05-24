@@ -67,14 +67,12 @@ export const editClassify = params => { return request.post(`/classify/update`, 
 
 export const addClassify = params => { return request.post(`/classify/add`, params); };
 
-export const deleteClassify = params => { return request.post(`/banner/delete/${params}`); };
+export const deleteClassify = params => { return request.post(`/classify/delete/${params}`); };
 
-export const deleteClassifies = params => { return request.post(`/banner/batchDelete/${params}`); };
+export const deleteClassifies = params => { return request.post(`/classify/batchDelete/${params}`); };
 
 /**************** 用户相关接口 ****************/
 export const getUserList = params => { return request.get(`/user/list`, { params: params }); };
-
-export const getUserListPage = params => { return request.get(`/user/listpage`, { params: params }); };
 
 export const removeUser = params => { return request.get(`/user/remove`, { params: params }); };
 
@@ -93,3 +91,19 @@ export const updateUserRole = (userId, roleIds) => { return request.post(`/role/
 
 /**************** 统计报表相关接口 ****************/
 export const getClassifyMvCount = () => { return request.get(`/report/classifyMvCount`); };
+
+/**************** 会员卡相关接口 ****************/
+export const getVipCardList = params => { return request.get(`/vip/list`, { params: params }); };
+
+export const deleteVipCard = params => { return request.post(`/vip/delete/${params}`); };
+
+export const batchDeleteVipCard = params => { return request.post(`/vip/batchDelete/${params}`); };
+
+export const editVipCard = (params, addMonth) => { return request.post(`/vip/update?addMonth=${addMonth}`, params ); };
+
+export const addVipCard = params => { return request.post(`/vip/add`, params); };
+
+export const bindVipCard = params => { return request.post(`/vip/bind`, params ); };
+
+export const getVipCardNum = () => { return request.get(`/vip/getVipCardNum` ); };
+

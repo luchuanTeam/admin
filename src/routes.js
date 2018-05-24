@@ -12,6 +12,7 @@ import Episodes from './views/movie/Episodes.vue'
 import AddEpisode from './views/movie/AddEpisode.vue'
 import EditEpisode from './views/movie/EditEpisode.vue'
 import Users from './views/user/Users.vue'
+import Vips from './views/vip/VipCard.vue'
 import One from './views/classify/OneLevel.vue'
 import Two from './views/classify/TwoLevel.vue'
 
@@ -67,6 +68,16 @@ let routes = [
         leaf: true,
         children: [
             { path: '/users', component: Users, name: '用户列表' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '会员卡管理',
+        iconCls: 'fa fa-user-o',
+        leaf: true,
+        children: [
+            { path: '/vip', component: Vips, name: '会员卡列表' }
         ]
     },
     {

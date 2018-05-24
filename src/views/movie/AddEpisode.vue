@@ -28,6 +28,20 @@
                         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                     </el-upload>
                 </el-form-item>
+                <!--视频类型-->
+                <el-form-item label="视频类型" prop="type" >
+                    <el-radio-group v-model="addForm.type">
+                        <el-radio v-for="item in mvType" :label="item.value">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+
+                <!--是否需要vip-->
+                <el-form-item label="视频权限" prop="vipType" >
+                    <el-radio-group v-model="addForm.vipType">
+                        <el-radio v-for="item in vipType" :label="item.value">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+
                 <!--视频上传-->
                 <el-form-item label="视频上传" prop="mvFilename">
                     <el-upload
@@ -40,7 +54,7 @@
                             :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="success" @click="mvSubmitUpload">上传到服务器</el-button>
-                        <div slot="tip" class="el-upload__tip">只能上传mp4文件，且不超过50MB</div>
+                        <div slot="tip" class="el-upload__tip">只能上传mp4/mp3文件，且不超过50MB</div>
                     </el-upload>
                 </el-form-item>
 
@@ -75,58 +89,24 @@
                 callback();
             };
             return {
-                classifies: [
+                mvType: [
                     {
-                        value: '1',
-                        label: '胎教',
-                        children: [
-                            {
-                                value: '9',
-                                label: '胎教音乐'
-                            },
-                            {
-                                value: '10',
-                                label: '国学胎教（音频）'
-                            }
-                        ]
+                        value: 1,
+                        label: '视频'
                     },
                     {
-                        value: '2',
-                        label: '早教',
-                        children: [
-                            {
-                                value: '11',
-                                label: '育儿课'
-                            },
-                            {
-                                value: '12',
-                                label: '亲子课'
-                            }
-                        ]
+                        value: 2,
+                        label: '音频'
+                    }
+                ],
+                vipType: [
+                    {
+                        value: 0,
+                        label: '普通会员'
                     },
                     {
-                        value: '3',
-                        label: '幼教'
-                    },
-                    {
-                        value: '4',
-                        label: '小学课程'
-                    },
-                    {
-                        value: '5',
-                        label: '初中课程'
-                    },
-                    {
-                        value: '6',
-                        label: '高中课程'
-                    },
-                    {
-                        value: '7',
-                        label: '国学'
-                    },
-                    {
-                        value: '8',
-                        label: '手工教程'
+                        value: 1,
+                        label: 'vip会员'
                     }
                 ],
                 addLoading: false,
@@ -149,7 +129,9 @@
                     episodeName: '',
                     episodeIntro: '',
                     episodeNum: '',
-                    mvId: this.$route.query.mvId
+                    mvId: this.$route.query.mvId,
+                    type: 1,
+                    vipType: 0
                 },
                 imgFilename: '',
                 imgNewFilename: '',
@@ -170,9 +152,17 @@
                 this.imgFilename = '';
                 this.imgNewFilename = '';
             },
-            imgHandleSuccess(res) {
-                this.imgFilename = res.data.filename;
-                this.imgNewFilename = res.data.newFilename;
+            imgHandleSuccess(res, file) {
+                if (res.status == 200) {
+                    this.imgFilename = res.data.filename;
+                    this.imgNewFilename = res.data.newFilename;
+                } else {
+                    this.$message({
+                        message: res.message || '提交失败',
+                        type: 'error'
+                    });
+                }
+
             },
             imgHandleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
@@ -186,9 +176,16 @@
             mvSubmitUpload() {
                 this.$refs.upload.submit();
             },
-            mvHandleSuccess(res) {
-                this.mvFilename = res.data.filename;
-                this.mvNewFilename = res.data.newFilename;
+            mvHandleSuccess(res, file) {
+                if (res.status == 200) {
+                    this.mvFilename = res.data.filename;
+                    this.mvNewFilename = res.data.newFilename;
+                } else {
+                    this.$message({
+                        message: res.message || '提交失败',
+                        type: 'error'
+                    });
+                }
             },
             mvHandleRemove(file, fileList) {
                 console.log(file, fileList);
@@ -219,6 +216,7 @@
                                     this.$refs['addForm'].resetFields();
                                     this.$refs.upload2.clearFiles();
                                     this.$refs.upload.clearFiles();
+                                    this.turnBack();
                                 } else {
                                     this.$message({
                                         message: res.data.message || '提交失败',

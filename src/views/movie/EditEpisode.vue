@@ -12,6 +12,14 @@
                 <el-form-item label="视频集数" prop="episodeNum">
                     <el-input v-model="editForm.episodeNum" auto-complete="off"></el-input>
                 </el-form-item>
+
+                <!--是否需要vip-->
+                <el-form-item label="视频权限" prop="vipType" >
+                    <el-radio-group v-model="editForm.vipType">
+                        <el-radio v-for="item in vipType" :label="item.value">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+
                 <!--图片上传-->
                 <el-form-item label="图片上传" prop="imgFilename">
                     <el-upload
@@ -45,7 +53,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button @click.native="turnBack">返回</el-button>
-                    <el-button type="primary" @click.native="editSubmit" :loading="addLoading">提交</el-button>
+                    <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
                 </el-form-item>
             </el-form>
         </el-row>
@@ -62,11 +70,21 @@
         data() {
             return {
                 fileList: [],
+                vipType: [
+                    {
+                        value: 0,
+                        label: '普通会员'
+                    },
+                    {
+                        value: 1,
+                        label: 'vip会员'
+                    }
+                ],
                 props: {
                     value: 'id',
                     children: 'classify'
                 },
-                addLoading: false,
+                editLoading: false,
                 editFormRules: {
                     episodeName: [
                         { required: true, message: '请输入视频名称', trigger: 'blur' }
@@ -79,7 +97,8 @@
                 editForm: {
                     episodeId: this.$route.query.episodeId,
                     episodeName: '',
-                    episodeIntro: ''
+                    episodeIntro: '',
+                    vipType: 0
                 },
                 imgFilename: '',
                 imgNewFilename: '',
@@ -131,7 +150,7 @@
                 this.$refs.editForm.validate((valid) => {
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                            this.addLoading = true;
+                            this.editLoading = true;
                             let para = Object.assign({}, this.editForm);
                             let filePara = {
                                 imgFilename: this.imgFilename,
@@ -140,12 +159,16 @@
                                 mvNewFilename: this.mvNewFilename
                             };
                             editEpisode(filePara, para).then((res) => {
-                                this.addLoading = false;
+                                this.editLoading = false;
                                 if (res.data.status == 200) {
                                     this.$message({
                                         message: '提交成功',
                                         type: 'success'
                                     });
+                                    this.$refs['editForm'].resetFields();
+                                    this.$refs.upload.clearFiles();
+                                    this.$refs.upload2.clearFiles();
+                                    this.turnBack();
                                 } else {
                                     this.$message({
                                         message: res.data.message || '提交失败',
@@ -164,6 +187,7 @@
                     this.editForm.episodeName = res.data.episodeName;
                     this.editForm.episodeIntro = res.data.episodeIntro;
                     this.editForm.episodeNum = res.data.episodeNum;
+                    this.editForm.vipType = res.data.vipType;
                 }
             });
         }

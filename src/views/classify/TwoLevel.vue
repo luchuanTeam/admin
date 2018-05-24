@@ -202,11 +202,19 @@
                     this.listLoading = true;
                     deleteClassify(row.classifyId).then((res) => {
                         this.listLoading = false;
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success'
-                        });
-                        this.getList();
+
+                        if (res.data.status == 200) {
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                            this.getList();
+                        } else {
+                            this.$message({
+                                message: res.data.message,
+                                type: 'error'
+                            });
+                        }
                     });
                 }).catch(() => {
 
