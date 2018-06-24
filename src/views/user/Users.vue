@@ -17,7 +17,7 @@
 
 		<!--列表-->
 		<template>
-			<el-table :data="users" highlight-current-row v-loading="loading" style="width: 100%;">
+			<el-table :data="users" stripe highlight-current-row v-loading="loading" style="width: 100%;">
 				<el-table-column type="index" width="60">
 				</el-table-column>
 				<el-table-column prop="userName" label="用户名" sortable>
@@ -30,9 +30,7 @@
 				</el-table-column>
 				<el-table-column prop="status" label="账号状态" :formatter="statusFormat" sortable>
 				</el-table-column>
-				<el-table-column prop="createTime" label="注册时间" :formatter="dateFormat" sortable>
-				</el-table-column>
-				<el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
+				<el-table-column prop="createTime" width="200" label="注册时间" :formatter="dateFormat" sortable>
 				</el-table-column>
 				<el-table-column label="操作" width="240">
 					<template scope="scope">

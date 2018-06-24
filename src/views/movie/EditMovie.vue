@@ -7,7 +7,7 @@
                     <el-input v-model="editForm.mvName" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="视频简介" prop="mvIntro">
-                    <el-input v-model="editForm.mvIntro" auto-complete="off"></el-input>
+                    <el-input type="textarea" v-model="editForm.mvIntro" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="分类" prop="classifyName">
                     <el-input v-model="editForm.classifyName" :disabled=true auto-complete="off"></el-input>

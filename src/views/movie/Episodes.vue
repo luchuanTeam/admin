@@ -19,20 +19,20 @@
         </el-col>
 
         <!--列表-->
-        <el-table :data="episodes" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+        <el-table :data="episodes" stripe highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
             <el-table-column type="selection" width="55">
             </el-table-column>
             <el-table-column type="index" width="60">
             </el-table-column>
             <el-table-column prop="episodeName" label="视频名称" sortable>
             </el-table-column>
-            <el-table-column prop="episodeIntro" label="视频简介" sortable>
+            <el-table-column prop="episodeIntro" show-overflow-tooltip="true" label="视频简介" sortable>
             </el-table-column>
             <el-table-column prop="episodeNum" label="当前集" width="100" sortable>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" :formatter="dateFormat" sortable>
+            <el-table-column prop="createTime" width="200" label="创建时间" :formatter="dateFormat" sortable>
             </el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
+            <el-table-column prop="updateTime" width="200" label="更新时间" :formatter="dateFormat" sortable>
             </el-table-column>
             <el-table-column label="缩略图" render="columnRender" width="80">
                 <template slot-scope="scope" >

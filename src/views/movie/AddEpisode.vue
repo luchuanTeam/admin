@@ -7,7 +7,7 @@
                     <el-input v-model="addForm.episodeName" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="视频简介" prop="episodeIntro">
-                    <el-input v-model="addForm.episodeIntro" auto-complete="off"></el-input>
+                    <el-input type="textarea" v-model="addForm.episodeIntro" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="视频集数" prop="episodeNum">
                     <el-input v-model="addForm.episodeNum" auto-complete="off"></el-input>

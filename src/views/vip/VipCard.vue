@@ -39,7 +39,7 @@
 					<template scope="scope">
 						<el-button size="small" @click="handleEdit(scope.$index, scope.row)">续费</el-button>
 						<el-button size="small" :disabled="!!scope.row.userId" @click="handleBind(scope.$index, scope.row)">绑定持卡人</el-button>
-						<el-button type="danger" :disabled="!!scope.row.userId" size="small" @click="handleDel(scope.$index, scope.row)">
+						<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">
 							删除
 						</el-button>
 					</template>

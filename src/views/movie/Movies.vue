@@ -16,18 +16,21 @@
         </el-col>
 
         <!--列表-->
-        <el-table :data="movies" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+        <el-table :data="movies" stripe highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
             <el-table-column type="selection" width="55">
             </el-table-column>
             <el-table-column type="index" width="60">
             </el-table-column>
             <el-table-column prop="mvName" label="视频名称" sortable>
             </el-table-column>
-            <el-table-column prop="mvIntro" label="视频简介" sortable>
+            <el-table-column prop="mvIntro" show-overflow-tooltip="true" label="视频简介" sortable>
             </el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
+            <el-table-column prop="updateTime" width="200" label="更新时间" :formatter="dateFormat" sortable>
             </el-table-column>
             <el-table-column prop="classifyName" label="分类" sortable>
+                <template slot-scope="scope">
+                    <el-tag type="success" size="medium">{{ scope.row.classifyName }}</el-tag>
+                </template>
             </el-table-column>
             <el-table-column prop="episodeCount" label="视频集数" sortable>
             </el-table-column>
