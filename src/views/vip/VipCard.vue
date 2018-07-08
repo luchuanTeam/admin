@@ -24,7 +24,9 @@
 				</el-table-column>
 				<el-table-column prop="cardPassword" label="会员卡密码" sortable>
 				</el-table-column>
-				<el-table-column prop="purchaseMonths" label="开通月数" sortable>
+				<!--<el-table-column prop="purchaseMonths" label="开通月数" sortable>-->
+				<!--</el-table-column>-->
+				<el-table-column prop="purchaseDays" label="开通天数" sortable>
 				</el-table-column>
 				<el-table-column prop="createTime" label="创建时间" :formatter="dateFormat" sortable>
 				</el-table-column>

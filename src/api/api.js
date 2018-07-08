@@ -107,3 +107,8 @@ export const bindVipCard = params => { return request.post(`/vip/bind`, params )
 
 export const getVipCardNum = () => { return request.get(`/vip/getVipCardNum` ); };
 
+export const getProductList = () => { return request.get(`/product/list`); };
+
+export const upsertProduct = params => { return request.post(`/product/upsert`, params); };
+
+export const deleteProduct = params => { return request.post(`/product/delete/${params}`); };
