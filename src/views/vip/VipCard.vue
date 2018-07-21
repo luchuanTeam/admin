@@ -24,11 +24,12 @@
 				</el-table-column>
 				<el-table-column prop="cardPassword" label="会员卡密码" sortable>
 				</el-table-column>
-				<!--<el-table-column prop="purchaseMonths" label="开通月数" sortable>-->
-				<!--</el-table-column>-->
 				<el-table-column prop="purchaseDays" label="开通天数" sortable>
 				</el-table-column>
-				<el-table-column prop="createTime" label="创建时间" :formatter="dateFormat" sortable>
+				<el-table-column prop="isForever" label="会员期限" sortable>
+					<template slot-scope="scope">
+						<el-tag type="success" size="medium">{{ scope.row.isForever ? '永久' : '限期' }}</el-tag>
+					</template>
 				</el-table-column>
 				<el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
 				</el-table-column>
@@ -68,8 +69,14 @@
 				<el-form-item label="确认密码" prop="checkPass">
 					<el-input type="password" v-model="addForm.checkPass" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="开通月数" prop="purchaseMonths">
-					<el-input-number v-model="addForm.purchaseMonths" :min="1" :max="99" label="描述文字"></el-input-number>
+				<el-form-item label="永久会员">
+					<el-radio-group v-model="addForm.isForever">
+						<el-radio :label=false>否</el-radio>
+						<el-radio :label=true>是</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item label="开通天数" prop="purchaseDays">
+					<el-input-number v-model="addForm.purchaseDays" :min="1" :max="999" label="描述文字"></el-input-number>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -87,8 +94,14 @@
 				<el-form-item label="到期时间">
 					<el-input v-model="editForm.expTime" :disabled=true></el-input>
 				</el-form-item>
-				<el-form-item label="续费月数" prop="nickName">
-					<el-input-number v-model="editForm.addMonth" :min="1" :max="99" label="描述文字"></el-input-number>
+				<el-form-item label="永久会员">
+					<el-radio-group v-model="editForm.isForever">
+						<el-radio :label=false>否</el-radio>
+						<el-radio :label=true>是</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item label="续费天数" prop="nickName">
+					<el-input-number v-model="editForm.addDays" :min="1" :max="999" label="描述文字"></el-input-number>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -157,9 +170,10 @@
                     cardNum: '',
                     cardPassword: '',
                     checkPass: '',
-                    purchaseMonths: 1,
+                    purchaseDays: 1,
                     userId: '',
-                    nickName: ''
+                    nickName: '',
+					isForever: false
                 },
                 addFormRules: {
                     cardPassword: [
@@ -184,9 +198,10 @@
                 editForm : {
                     cardId: '',
                     cardNum: '',
-                    purchaseMonths: 1,
+                    purchaseDays: 1,
                     expTime: '',
-                    addMonth: 1
+                    addDays: 1,
+                    isForever: false
                 },
                 editFormRules: {
 
@@ -253,8 +268,9 @@
             handleEdit: function (index, row) {
                 this.editForm.cardId = row.cardId;
                 this.editForm.cardNum = row.cardNum;
-                this.editForm.purchaseMonths = row.purchaseMonths;
+                this.editForm.purchaseDays = row.purchaseDays;
                 this.editForm.expTime = row.expTime;
+                this.editForm.isForever = row.isForever;
                 this.editFormVisible = true;
             },
             handleBind: function (index, row) {
@@ -324,9 +340,9 @@
             editSubmit: function () {
                 this.editLoading = true;
                 let para = Object.assign({}, this.editForm);
-				let addMonth = this.editForm.addMonth;
+				let addDays = this.editForm.addDays;
 
-                editVipCard(para, addMonth).then((res) => {
+                editVipCard(para, addDays).then((res) => {
                     this.editLoading = false;
                     if (res.data.status == 200) {
                         this.$message({

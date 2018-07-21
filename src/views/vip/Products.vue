@@ -107,7 +107,8 @@
                 timeType: [
                     {value: 1, label: '年'},
                     {value: 2, label: '月'},
-                    {value: 3, label: '天'}
+                    {value: 3, label: '天'},
+                    {value: 4, label: '永久'}
                 ],
                 loading: false,
                 /**
@@ -155,6 +156,8 @@
             timeUnitFormat: function (item) {
               for (let i = 0; i < this.timeType.length; i++) {
                   if (item.timeUnit == this.timeType[i].value) {
+                      if (item.timeUnit == 4)
+                          return '时长：' + '永久';
                       return '时长：' + item.timeNum + this.timeType[i].label;
                   }
               }

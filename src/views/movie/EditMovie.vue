@@ -1,6 +1,6 @@
 <template>
     <section>
-        <!--新增界面-->
+        <!--编辑界面-->
         <el-row style="margin: 20px 0;">
             <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
                 <el-form-item label="视频名称" prop="mvName">
@@ -9,8 +9,18 @@
                 <el-form-item label="视频简介" prop="mvIntro">
                     <el-input type="textarea" v-model="editForm.mvIntro" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="分类" prop="classifyName">
+
+                <el-form-item label="分类路径" prop="classifyName">
                     <el-input v-model="editForm.classifyName" :disabled=true auto-complete="off"></el-input>
+                </el-form-item>
+
+                <el-form-item label="修改分类" prop="classifyId">
+                    <el-cascader
+                            @change="selectChange"
+                            :options="classifies"
+                            @active-item-change="handleItemChange"
+                            :props="props"
+                    ></el-cascader>
                 </el-form-item>
 
                 <!--是否需要vip-->
@@ -104,7 +114,7 @@
                     mvId: this.$route.query.mvId,
                     mvName: '',
                     mvIntro: '',
-                    //classifyId: '',
+                    classifyId: '',
                     classifyName: '',
                     filename: '',
                     newFilename: '',
@@ -137,7 +147,7 @@
                     return false;
                 }
             },
-            /*handleItemChange(val) {
+            handleItemChange(val) {
                 for (var item of this.classifies) {
                     if (item.id == val && item.classify.length == 0) {
                         getClassifyById(val).then((res) => {
@@ -149,10 +159,25 @@
                         break;
                     }
                 }
-            },*/
-            /*selectChange(val) {
+            },
+            selectChange(val) {
+                var path = '';
                 this.editForm.classifyId = val[1];
-            },*/
+                for (var item of this.classifies) {
+                    if (item.id === val[0]) {
+                        path = item.label;
+                        for (var child of item.classify) {
+                            if (child.id === val[1]) {
+                                path += '/' + child.label;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+
+                }
+                this.editForm.classifyName = path;
+            },
             //新增
             editSubmit: function () {
                 this.$refs.editForm.validate((valid) => {

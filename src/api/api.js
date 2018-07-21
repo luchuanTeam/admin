@@ -99,7 +99,7 @@ export const deleteVipCard = params => { return request.post(`/vip/delete/${para
 
 export const batchDeleteVipCard = params => { return request.post(`/vip/batchDelete/${params}`); };
 
-export const editVipCard = (params, addMonth) => { return request.post(`/vip/update?addMonth=${addMonth}`, params ); };
+export const editVipCard = (params, addDays) => { return request.post(`/vip/update?addDays=${addDays}`, params ); };
 
 export const addVipCard = params => { return request.post(`/vip/add`, params); };
 
@@ -112,3 +112,12 @@ export const getProductList = () => { return request.get(`/product/list`); };
 export const upsertProduct = params => { return request.post(`/product/upsert`, params); };
 
 export const deleteProduct = params => { return request.post(`/product/delete/${params}`); };
+
+/**************** 试题相关接口 ****************/
+export const getPaperList = params => { return request.get(`/paper/list`, { params: params }); };
+
+export const editPaper = params => { return request.post(`/paper/update`, params ); };
+
+export const deletePaper = params => { return request.post(`/paper/delete/${params}`); };
+
+export const addPaper = (oldFilename, newFilename, params) => { return request.post(`/paper/add?oldFilename=${oldFilename}&newFilename=${newFilename}`, params ); };

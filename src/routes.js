@@ -16,6 +16,7 @@ import Vips from './views/vip/VipCard.vue'
 import Products from './views/vip/Products.vue'
 import One from './views/classify/OneLevel.vue'
 import Two from './views/classify/TwoLevel.vue'
+import Paper from './views/paper/Paper.vue'
 
 
 let routes = [
@@ -64,6 +65,15 @@ let routes = [
     {
         path: '/',
         component: Home,
+        iconCls: 'fa fa-file-word-o',
+        leaf: true,
+        children: [
+            { path: '/paper', component: Paper, name: '试题管理' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
         name: '用户管理',
         iconCls: 'fa fa-user-o',
         leaf: true,
@@ -88,7 +98,7 @@ let routes = [
         iconCls: 'fa fa-th-large',
         leaf: true,
         children: [
-            { path: '/oneLev', component: One, name: '一级分类列表' },
+            { path: '/oneLev', component: One, name: '分类管理' },
             { path: '/twoLev', component: Two, name: '二级分类列表' }
         ]
     },

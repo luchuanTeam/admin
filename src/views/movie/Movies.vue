@@ -4,7 +4,7 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="filters">
                 <el-form-item>
-                    <el-input v-model="filters.mvName" placeholder="视频名称"></el-input>
+                    <el-input v-model="filters.searchVal" placeholder="视频/分类名称"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" v-on:click="getList">查询</el-button>
@@ -27,7 +27,7 @@
             </el-table-column>
             <el-table-column prop="updateTime" width="200" label="更新时间" :formatter="dateFormat" sortable>
             </el-table-column>
-            <el-table-column prop="classifyName" label="分类" sortable>
+            <el-table-column prop="classifyName" show-overflow-tooltip="true" label="分类" sortable>
                 <template slot-scope="scope">
                     <el-tag type="success" size="medium">{{ scope.row.classifyName }}</el-tag>
                 </template>
@@ -96,7 +96,7 @@
                 let para = {
                     pageNum: this.page,
                     pageSize: this.pageSize,
-                    mvName: this.filters.mvName
+                    mvName: this.filters.searchVal
                 };
                 this.listLoading = true;
 
