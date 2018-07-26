@@ -178,12 +178,12 @@
                 this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
 			},
             handleBefore(file){
-                if (file.type.indexOf("msword") <= -1
-					&& file.type.indexOf("pdf") <= -1
-					&& file.type.indexOf("document") <= -1) {
-                    this.$message.warning(`只能上传doc/docx/pdf类型的文件`);
-                    return false;
-				}
+//                if (file.type.indexOf("msword") <= -1
+//					&& file.type.indexOf("pdf") <= -1
+//					&& file.type.indexOf("document") <= -1) {
+//                    this.$message.warning(`只能上传doc/docx/pdf类型的文件`);
+//                    return false;
+//				}
                 if (this.addForm.filename) {
                     this.$message.warning(`只能上传 1 个文件`);
                     return false;
@@ -194,7 +194,8 @@
 				let para = {
                     pageNum: this.page,
                     pageSize: this.pageSize,
-                    searchVal: this.filters.searchVal
+                    searchVal: this.filters.searchVal,
+                    paperType: 1
 				};
 				this.listLoading = true;
 

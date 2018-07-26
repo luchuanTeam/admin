@@ -17,6 +17,7 @@ import Products from './views/vip/Products.vue'
 import One from './views/classify/OneLevel.vue'
 import Two from './views/classify/TwoLevel.vue'
 import Paper from './views/paper/Paper.vue'
+import Courseware from './views/paper/Courseware.vue'
 
 
 let routes = [
@@ -65,10 +66,11 @@ let routes = [
     {
         path: '/',
         component: Home,
+        name: '文件管理',
         iconCls: 'fa fa-file-word-o',
-        leaf: true,
         children: [
-            { path: '/paper', component: Paper, name: '试题管理' }
+            { path: '/paper', component: Paper, name: '试题管理' },
+            { path: '/courseware', component: Courseware, name: '课件管理' }
         ]
     },
     {

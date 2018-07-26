@@ -4,7 +4,7 @@ export const context = process.env.BASE_API;
 // create an axios instance
 const request = axios.create({
     baseURL: process.env.BASE_API, // api的base_url
-    timeout: 5000 // request timeout
+    timeout: 6000*5 // request timeout
 });
 
 export const requestLogin = params => { return request.post(`/user/login`, params).then(res => res.data); };
@@ -102,6 +102,8 @@ export const batchDeleteVipCard = params => { return request.post(`/vip/batchDel
 export const editVipCard = (params, addDays) => { return request.post(`/vip/update?addDays=${addDays}`, params ); };
 
 export const addVipCard = params => { return request.post(`/vip/add`, params); };
+
+export const batchAddVipCard = params => { return request.post(`/vip/batchAdd`, params); };
 
 export const bindVipCard = params => { return request.post(`/vip/bind`, params ); };
 
