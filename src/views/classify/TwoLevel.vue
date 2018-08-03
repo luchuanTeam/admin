@@ -124,7 +124,7 @@
                 editLoading: false,
                 editFormRules: {
                     classifyName: [
-                        { required: true, message: '请输入姓名', trigger: 'blur' }
+                        { required: true, message: '请输入名称', trigger: 'blur' }
                     ]
                 },
                 //编辑界面数据
@@ -140,7 +140,10 @@
                 addLoading: false,
                 addFormRules: {
                     classifyName: [
-                        { required: true, message: '请输入姓名', trigger: 'blur' }
+                        { required: true, message: '请输入分类名称', trigger: 'blur' }
+                    ],
+                    classifyDesc: [
+                        { required: true, message: '请输入分类描述', trigger: 'blur' }
                     ]
                 },
                 //新增界面数据
@@ -171,7 +174,8 @@
                     pageNum: this.page,
                     pageSize: this.pageSize,
                     classifyName: this.filters.classifyName,
-                    parentId: this.$route.query.classifyId
+                    parentId: this.$route.query.classifyId,
+                    classifyType: 1
                 };
                 this.listLoading = true;
 

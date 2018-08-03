@@ -4,7 +4,7 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="filters">
                 <el-form-item>
-                    <el-input v-model="filters.searchVal" placeholder="分类名称"></el-input>
+                    <el-input v-model="filters.classifyName" placeholder="分类名称"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" v-on:click="getList">查询</el-button>
@@ -27,18 +27,15 @@
             </el-table-column>
             <el-table-column prop="classifyOrder" label="排序号" sortable>
             </el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
+            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable width="180">
             </el-table-column>
-            <el-table-column label="图标" render="columnRender" width="80">
-                <template slot-scope="scope" >
-                    <div v-html="imgRowRender(scope.row)"></div>
-                </template>
-            </el-table-column>
-            <el-table-column label="操作" width="280">
+            <el-table-column label="操作" width="400">
                 <template scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" @click="handleManage(scope.$index, scope.row)">管理</el-button>
-                    <!--<el-button type="danger"  size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
+                    <el-button size="small" @click="handleManageZJ(scope.$index, scope.row)">章节管理</el-button>
+                    <el-button size="small" @click="handleManageDY(scope.$index, scope.row)">单元管理</el-button>
+                    <el-button size="small" @click="handleManageQZQM(scope.$index, scope.row)">期中期末</el-button>
+                    <el-button type="danger"  size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -108,7 +105,7 @@
         data() {
             return {
                 filters: {
-                    searchVal: ''
+                    classifyName: ''
                 },
                 classifies: [],
                 total: 0,
@@ -150,7 +147,7 @@
                     classifyOrder: '',
                     iconUrl: '',
                     parentId: 0,
-                    classifyType: 1
+                    classifyType: 2
                 }
             }
         },
@@ -168,8 +165,8 @@
                 let para = {
                     pageNum: this.page,
                     pageSize: this.pageSize,
-                    searchVal: this.filters.searchVal,
-                    classifyType: 1
+                    classifyName: this.filters.classifyName,
+                    classifyType: 2
                 };
                 this.listLoading = true;
 
@@ -210,9 +207,17 @@
 
                 });
             },
-            //显示管理界面
-            handleManage: function (index, row) {
-                this.$router.push({ path: '/twoLev', query: { classifyId: row.classifyId, classifyName: row.classifyName } });
+            //显示章节管理界面
+            handleManageZJ: function (index, row) {
+                this.$router.push({ path: '/zhang', query: { classifyId: row.classifyId, classifyName: row.classifyName } });
+            },
+            //显示单元管理界面
+            handleManageDY: function (index, row) {
+                this.$router.push({ path: '/dy', query: { classifyId: row.classifyId, classifyName: row.classifyName } });
+            },
+            //显示期中期末管理界面
+            handleManageQZQM: function (index, row) {
+                this.$router.push({ path: '/qzqm', query: { classifyId: row.classifyId, classifyName: row.classifyName } });
             },
 
             //显示编辑界面

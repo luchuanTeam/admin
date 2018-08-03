@@ -4,7 +4,10 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="filters">
                 <el-form-item>
-                    <el-input v-model="filters.searchVal" placeholder="分类名称"></el-input>
+                    <el-button type="" v-on:click="handleBack">返回</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-input v-model="filters.classifyName" placeholder="分类名称"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" v-on:click="getList">查询</el-button>
@@ -27,18 +30,18 @@
             </el-table-column>
             <el-table-column prop="classifyOrder" label="排序号" sortable>
             </el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
-            </el-table-column>
-            <el-table-column label="图标" render="columnRender" width="80">
+            <el-table-column label="所属年级" render="columnRender">
                 <template slot-scope="scope" >
-                    <div v-html="imgRowRender(scope.row)"></div>
+                    <div v-html="parentName"></div>
                 </template>
+            </el-table-column>
+            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
             </el-table-column>
             <el-table-column label="操作" width="280">
                 <template scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" @click="handleManage(scope.$index, scope.row)">管理</el-button>
-                    <!--<el-button type="danger"  size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
+                    <el-button size="small" @click="handleManageZJ(scope.$index, scope.row)">小节管理</el-button>
+                    <el-button type="danger" :disabled="scope.row.episodeCount > 0" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -100,7 +103,7 @@
 
 <script>
     import util from '../../common/js/util'
-    import { getOneClassifyList,editClassify,addClassify,deleteClassify,deleteClassifies } from '../../api/api';
+    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies } from '../../api/api';
     import moment from 'moment/moment';
     import Qs from 'qs';
 
@@ -108,9 +111,10 @@
         data() {
             return {
                 filters: {
-                    searchVal: ''
+                    classifyName: ''
                 },
                 classifies: [],
+                parentName: this.$route.query.classifyName,
                 total: 0,
                 page: 1,
                 pageSize: 10,
@@ -121,7 +125,10 @@
                 editLoading: false,
                 editFormRules: {
                     classifyName: [
-                        { required: true, message: '请输入姓名', trigger: 'blur' }
+                        { required: true, message: '请输入分类名称', trigger: 'blur' }
+                    ],
+                    classifyDesc: [
+                        { required: true, message: '请输入分类描述', trigger: 'blur' }
                     ]
                 },
                 //编辑界面数据
@@ -137,10 +144,7 @@
                 addLoading: false,
                 addFormRules: {
                     classifyName: [
-                        { required: true, message: '请输入分类名称', trigger: 'blur' }
-                    ],
-                    classifyDesc: [
-                        { required: true, message: '请输入分类描述', trigger: 'blur' }
+                        { required: true, message: '请输入姓名', trigger: 'blur' }
                     ]
                 },
                 //新增界面数据
@@ -149,12 +153,15 @@
                     classifyDesc: '',
                     classifyOrder: '',
                     iconUrl: '',
-                    parentId: 0,
-                    classifyType: 1
+                    parentId: this.$route.query.classifyId,
+                    classifyType: 3
                 }
             }
         },
         methods: {
+            handleBack() {
+                this.$router.back();
+            },
             handleSizeChange(val) {
                 this.pageSize = val;
                 this.getList();
@@ -168,12 +175,13 @@
                 let para = {
                     pageNum: this.page,
                     pageSize: this.pageSize,
-                    searchVal: this.filters.searchVal,
-                    classifyType: 1
+                    classifyName: this.filters.classifyName,
+                    parentId: this.$route.query.classifyId,
+                    classifyType: 3
                 };
                 this.listLoading = true;
 
-                getOneClassifyList(para).then((res) => {
+                getTwoClassifyById(para).then((res) => {
                     let data = res.data.data;
                     this.total = data.total;
                     this.pageSize = data.pageSize;
@@ -200,19 +208,28 @@
                     this.listLoading = true;
                     deleteClassify(row.classifyId).then((res) => {
                         this.listLoading = false;
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success'
-                        });
-                        this.getList();
+
+                        if (res.data.status == 200) {
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                            this.getList();
+                        } else {
+                            this.$message({
+                                message: res.data.message,
+                                type: 'error'
+                            });
+                        }
                     });
                 }).catch(() => {
 
                 });
             },
-            //显示管理界面
-            handleManage: function (index, row) {
-                this.$router.push({ path: '/twoLev', query: { classifyId: row.classifyId, classifyName: row.classifyName } });
+
+            //显示小节管理界面
+            handleManageZJ: function (index, row) {
+                this.$router.push({ path: '/jie', query: { classifyId: row.classifyId, classifyName: this.parentName + "/" + row.classifyName } });
             },
 
             //显示编辑界面

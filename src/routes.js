@@ -16,8 +16,16 @@ import Vips from './views/vip/VipCard.vue'
 import Products from './views/vip/Products.vue'
 import One from './views/classify/OneLevel.vue'
 import Two from './views/classify/TwoLevel.vue'
+import NJ from './views/classify/NianJi.vue'
+import Zhang from './views/classify/Zhang.vue'
+import Jie from './views/classify/Jie.vue'
+import DY from './views/classify/Danyuan.vue'
+import QZQM from './views/classify/QZQM.vue'
 import Paper from './views/paper/Paper.vue'
 import Courseware from './views/paper/Courseware.vue'
+import Questions from './views/question/Questions.vue'
+import AddQuestion from './views/question/AddQuestion.vue'
+import EditQuestion from './views/question/editQuestion.vue'
 
 
 let routes = [
@@ -98,10 +106,25 @@ let routes = [
         component: Home,
         name: '分类管理',
         iconCls: 'fa fa-th-large',
+        children: [
+            { path: '/oneLev', component: One, name: '视频分类' },
+            { path: '/nj', component: NJ, name: '年级分类' },
+            { path: '/zhang', hidden: true, component: Zhang, name: '章分类' },
+            { path: '/dy', hidden: true, component: DY, name: '单元分类' },
+            { path: '/qzqm', hidden: true, component: QZQM, name: '期中期末分类' },
+            { path: '/twoLev', hidden: true, component: Two, name: '视频子分类' },
+            { path: '/jie', hidden: true, component: Jie, name: '节分类' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        iconCls: 'el-icon-upload',
         leaf: true,
         children: [
-            { path: '/oneLev', component: One, name: '分类管理' },
-            { path: '/twoLev', component: Two, name: '二级分类列表' }
+            { path: '/questions', component: Questions, name: '题目管理' },
+            { path: '/addQuestion', component: AddQuestion, name: '添加题目' },
+            { path: '/editQuestion', component: EditQuestion, name: '编辑题目' }
         ]
     },
     {

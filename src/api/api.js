@@ -38,6 +38,8 @@ export const pubMovie = params => { return request.post(`/movie/pub`, params); }
 /**************** 视频集相关接口 ****************/
 export const getEpisodeList = params => { return request.get(`/episode/list`, { params: params }); };
 
+export const getAllEpisodeList = params => { return request.get(`/episode/getEpisodelist`, { params: params }); };
+
 export const getEpisode = params => { return request.get(`/episode/getEpisode`, { params: params }); };
 
 export const getEpisodeById = params => { return request.get(`/episode/${params}`); };
@@ -70,6 +72,9 @@ export const addClassify = params => { return request.post(`/classify/add`, para
 export const deleteClassify = params => { return request.post(`/classify/delete/${params}`); };
 
 export const deleteClassifies = params => { return request.post(`/classify/batchDelete/${params}`); };
+
+export const getClassifyByType = params => { return request.get(`/classify/getClassifyByType`, { params: params }); };
+
 
 /**************** 用户相关接口 ****************/
 export const getUserList = params => { return request.get(`/user/list`, { params: params }); };
@@ -123,3 +128,20 @@ export const editPaper = params => { return request.post(`/paper/update`, params
 export const deletePaper = params => { return request.post(`/paper/delete/${params}`); };
 
 export const addPaper = (oldFilename, newFilename, params) => { return request.post(`/paper/add?oldFilename=${oldFilename}&newFilename=${newFilename}`, params ); };
+
+/**************** 题目相关接口 ****************/
+export const getQuestionList = params => { return request.get(`/question/list`, { params: params }); };
+
+export const getQuestion = params => { return request.get(`/question/getQuestion/${params}`); };
+
+export const addQuestion = (filePara, params) => {
+    return request.post(`/question/add?oldFilename=${filePara.imgFilename}&newFilename=${filePara.imgNewFilename}&mvOldFilename=${filePara.mvFilename}&mvNewFilename=${filePara.mvNewFilename}`, params);
+};
+
+export const editQuestion = (filePara, params) => {
+    return request.post(`/question/update?oldFilename=${filePara.imgFilename}&newFilename=${filePara.imgNewFilename}&mvOldFilename=${filePara.mvFilename}&mvNewFilename=${filePara.mvNewFilename}`, params)
+};
+
+export const deleteQuestion = params => { return request.post(`/question/delete/${params}`); };
+
+export const deleteQuestions = params => { return request.post(`/question/batchDelete`, {params: params}); };
