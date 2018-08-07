@@ -133,7 +133,7 @@
 <script>
     import util from '../../common/js/util'
     import qs from 'qs'
-    import {getClassifyByType, getAllEpisodeList, editQuestion, getQuestion, context} from '../../api/api';
+    import {getTreeByType, getAllEpisodeList, editQuestion, getQuestion, context} from '../../api/api';
 
     import moment from 'moment/moment';
     import ElOption from "../../../node_modules/element-ui/packages/select/src/option.vue";
@@ -333,7 +333,7 @@
                 let para = {
                     type: type
                 };
-                getClassifyByType(para).then((res) => {
+                getTreeByType(para).then((res) => {
                     let arr = res.data;
                     this.filterClassifies(arr);
                     this.classifies = arr;

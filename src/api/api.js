@@ -57,9 +57,9 @@ export const deleteEpisode = params => { return request.post(`/episode/delete/${
 export const deleteEpisodes = params => { return request.post(`/episode/batchDelete/${params}`); };
 
 /**************** 分类相关接口 ****************/
-export const getClassify = () => { return request.get(`/movie/getClassify`); };
+export const getClassify = params => { return request.get(`/classify/getListByType`, { params: params }); };
 
-export const getClassifyById = (id) => { return request.get(`/movie/getClassify/${id}`); };
+export const getClassifyById = params => { return request.get(`/classify/getChildListByParentId`, { params: params }); };
 
 export const getOneClassifyList = params => { return request.get(`/classify/list`, { params: params }); };
 
@@ -73,7 +73,7 @@ export const deleteClassify = params => { return request.post(`/classify/delete/
 
 export const deleteClassifies = params => { return request.post(`/classify/batchDelete/${params}`); };
 
-export const getClassifyByType = params => { return request.get(`/classify/getClassifyByType`, { params: params }); };
+export const getTreeByType = params => { return request.get(`/classify/getTreeByType`, { params: params }); };
 
 
 /**************** 用户相关接口 ****************/

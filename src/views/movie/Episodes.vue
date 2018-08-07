@@ -26,7 +26,7 @@
             </el-table-column>
             <el-table-column prop="episodeName" label="视频名称" sortable>
             </el-table-column>
-            <el-table-column prop="episodeIntro" show-overflow-tooltip="true" label="视频简介" sortable>
+            <el-table-column prop="episodeIntro" :show-overflow-tooltip=true label="视频简介" sortable>
             </el-table-column>
             <el-table-column prop="episodeNum" label="当前集" width="100" sortable>
             </el-table-column>

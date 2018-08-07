@@ -151,7 +151,10 @@
             handleItemChange(val) {
                 for (var item of this.classifies) {
                     if (item.id == val && item.classify.length == 0) {
-                        getClassifyById(val).then((res) => {
+                        let param = {
+                            parentId: val[0]
+                        };
+                        getClassifyById(param).then((res) => {
                             item.classify = res.data;
                             for (var item2 of item.classify) {
                                 delete item2.classify;
@@ -211,7 +214,10 @@
             }
         },
         mounted() {
-            getClassify().then((res) => {
+            let param = {
+                type: 1
+            };
+            getClassify(param).then((res) => {
                 this.classifies = res.data;
             })
         }
