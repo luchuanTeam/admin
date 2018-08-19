@@ -40,7 +40,7 @@
             <el-table-column label="操作" width="280">
                 <template scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button type="danger" :disabled="scope.row.episodeCount > 0" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                    <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -48,7 +48,7 @@
         <!--工具条-->
         <el-col :span="24" class="toolbar">
             <el-pagination layout="sizes, prev, pager, next" @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :page-sizes="[10, 20, 50]" :page-size="pageSize" :total="total" style="float:right;">
+                           :page-sizes="[20, 50, 100]" :page-size="pageSize" :total="total" style="float:right;">
             </el-pagination>
         </el-col>
 
@@ -102,7 +102,7 @@
 
 <script>
     import util from '../../common/js/util'
-    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies } from '../../api/api';
+    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies, ClsTypeEnum } from '../../api/api';
     import moment from 'moment/moment';
     import Qs from 'qs';
 
@@ -116,7 +116,7 @@
                 parentName: this.$route.query.classifyName,
                 total: 0,
                 page: 1,
-                pageSize: 10,
+                pageSize: 20,
                 listLoading: false,
                 sels: [],//列表选中列
 
@@ -153,7 +153,7 @@
                     classifyOrder: '',
                     iconUrl: '',
                     parentId: this.$route.query.classifyId,
-                    classifyType: 4
+                    classifyType: this.$route.query.type
                 }
             }
         },
@@ -176,7 +176,7 @@
                     pageSize: this.pageSize,
                     classifyName: this.filters.classifyName,
                     parentId: this.$route.query.classifyId,
-                    classifyType: 4
+                    classifyType: this.$route.query.type
                 };
                 this.listLoading = true;
 

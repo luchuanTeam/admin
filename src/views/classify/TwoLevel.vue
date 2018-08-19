@@ -48,7 +48,7 @@
         <!--工具条-->
         <el-col :span="24" class="toolbar">
             <el-pagination layout="sizes, prev, pager, next" @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :page-sizes="[10, 20, 50]" :page-size="pageSize" :total="total" style="float:right;">
+                           :page-sizes="[20, 50, 100]" :page-size="pageSize" :total="total" style="float:right;">
             </el-pagination>
         </el-col>
 
@@ -102,7 +102,7 @@
 
 <script>
     import util from '../../common/js/util'
-    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies } from '../../api/api';
+    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies, ClsTypeEnum } from '../../api/api';
     import moment from 'moment/moment';
     import Qs from 'qs';
 
@@ -116,7 +116,7 @@
                 parentName: this.$route.query.classifyName,
                 total: 0,
                 page: 1,
-                pageSize: 10,
+                pageSize: 20,
                 listLoading: false,
                 sels: [],//列表选中列
 
@@ -175,7 +175,7 @@
                     pageSize: this.pageSize,
                     classifyName: this.filters.classifyName,
                     parentId: this.$route.query.classifyId,
-                    classifyType: 1
+                    classifyType: ClsTypeEnum.MOVIE
                 };
                 this.listLoading = true;
 

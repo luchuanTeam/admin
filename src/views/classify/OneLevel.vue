@@ -100,7 +100,7 @@
 
 <script>
     import util from '../../common/js/util'
-    import { getOneClassifyList,editClassify,addClassify,deleteClassify,deleteClassifies } from '../../api/api';
+    import { getOneClassifyList,editClassify,addClassify,deleteClassify,deleteClassifies, ClsTypeEnum } from '../../api/api';
     import moment from 'moment/moment';
     import Qs from 'qs';
 
@@ -150,7 +150,7 @@
                     classifyOrder: '',
                     iconUrl: '',
                     parentId: 0,
-                    classifyType: 1
+                    classifyType: ClsTypeEnum.MOVIE
                 }
             }
         },
@@ -169,7 +169,7 @@
                     pageNum: this.page,
                     pageSize: this.pageSize,
                     searchVal: this.filters.searchVal,
-                    classifyType: 1
+                    classifyType: ClsTypeEnum.MOVIE
                 };
                 this.listLoading = true;
 

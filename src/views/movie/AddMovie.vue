@@ -51,7 +51,7 @@
 
 <script>
     import util from '../../common/js/util'
-    import { addMovie, getClassify, getClassifyById, context } from '../../api/api';
+    import { addMovie, getClassify, getClassifyById, context, ClsTypeEnum } from '../../api/api';
 
     import moment from 'moment/moment';
 
@@ -215,7 +215,7 @@
         },
         mounted() {
             let param = {
-                type: 1
+                type: ClsTypeEnum.MOVIE
             };
             getClassify(param).then((res) => {
                 this.classifies = res.data;

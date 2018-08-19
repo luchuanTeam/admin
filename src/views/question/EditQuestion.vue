@@ -12,10 +12,10 @@
 
                 <el-form-item label="题目模块" prop="module">
                     <el-radio-group @change="radioSelectChange" v-model="editForm.module">
-                        <el-radio :label=1>章节练习</el-radio>
-                        <el-radio :label=2>专业知识练习</el-radio>
-                        <el-radio :label=3>单元测试</el-radio>
-                        <el-radio :label=4>期中期末</el-radio>
+                        <el-radio :label=1>专题练习</el-radio>
+                        <el-radio :label=2>知识巩固</el-radio>
+                        <el-radio :label=3>历年真题</el-radio>
+                        <el-radio :label=4>仿真练习</el-radio>
                     </el-radio-group>
                 </el-form-item>
 
@@ -45,10 +45,10 @@
 
                 <el-form-item label="答案选项" prop="answer">
                     <el-select v-model="editForm.answer" placeholder="请选择">
-                        <el-option value="answerA" label="A"></el-option>
-                        <el-option value="answerB" label="B"></el-option>
-                        <el-option value="answerC" label="C"></el-option>
-                        <el-option value="answerD" label="D"></el-option>
+                        <el-option value="A" label="A"></el-option>
+                        <el-option value="B" label="B"></el-option>
+                        <el-option value="C" label="C"></el-option>
+                        <el-option value="D" label="D"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="选项A" prop="answerA">
@@ -133,7 +133,7 @@
 <script>
     import util from '../../common/js/util'
     import qs from 'qs'
-    import {getTreeByType, getAllEpisodeList, editQuestion, getQuestion, context} from '../../api/api';
+    import {getTreeByType, getAllEpisodeList, editQuestion, getQuestion, context, ClsTypeEnum} from '../../api/api';
 
     import moment from 'moment/moment';
     import ElOption from "../../../node_modules/element-ui/packages/select/src/option.vue";
@@ -204,13 +204,15 @@
             },
 
             radioSelectChange(val) {
-                let type = 3;
-                if (val == 1 || val == 2) {
-                    type = 3;
+                let type = '';
+                if (val == 1) {
+                    type = ClsTypeEnum.ZTLXZ;
+                } else if (val == 2) {
+                    type = ClsTypeEnum.ZSGGZ;
                 } else if (val == 3) {
-                    type = 5;
+                    type = ClsTypeEnum.LNZT;
                 } else if (val == 4) {
-                    type = 6;
+                    type = ClsTypeEnum.FZLX;
                 }
                 this.getList(type);
             },
@@ -367,7 +369,7 @@
                     this.editForm = res.data.data;
                 }
             });
-            this.getList(3);
+            this.getList(ClsTypeEnum.ZTLXZ);
         }
     }
 

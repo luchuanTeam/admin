@@ -4,9 +4,6 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="filters">
                 <el-form-item>
-                    <el-button type="" v-on:click="handleBack">返回</el-button>
-                </el-form-item>
-                <el-form-item>
                     <el-input v-model="filters.classifyName" placeholder="分类名称"></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -30,17 +27,21 @@
             </el-table-column>
             <el-table-column prop="classifyOrder" label="排序号" sortable>
             </el-table-column>
-            <el-table-column label="所属年级" render="columnRender">
+            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable width="180">
+            </el-table-column>
+            <el-table-column label="图标" render="columnRender" width="80">
                 <template slot-scope="scope" >
-                    <div v-html="parentName"></div>
+                    <div v-html="imgRowRender(scope.row)"></div>
                 </template>
             </el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
-            </el-table-column>
-            <el-table-column label="操作" width="280">
+            <el-table-column label="操作" width="480">
                 <template scope="scope">
-                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button type="danger" :disabled="scope.row.episodeCount > 0" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                    <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button size="small"  @click="handleManage1(scope.$index, scope.row)">专题练习</el-button>
+                    <el-button size="small" @click="handleManage2(scope.$index, scope.row)">知识巩固</el-button>
+                    <el-button size="small" @click="handleManage3(scope.$index, scope.row)">历年真题 </el-button>
+                    <el-button size="small" @click="handleManage4(scope.$index, scope.row)">仿真练习</el-button>
+                    <el-button type="danger"  size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -48,7 +49,7 @@
         <!--工具条-->
         <el-col :span="24" class="toolbar">
             <el-pagination layout="sizes, prev, pager, next" @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :page-sizes="[10, 20, 50]" :page-size="pageSize" :total="total" style="float:right;">
+                           :page-sizes="[20, 50, 100]" :page-size="pageSize" :total="total" style="float:right;">
             </el-pagination>
         </el-col>
 
@@ -102,7 +103,7 @@
 
 <script>
     import util from '../../common/js/util'
-    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies } from '../../api/api';
+    import { getOneClassifyList,editClassify,addClassify,deleteClassify,deleteClassifies, ClsTypeEnum } from '../../api/api';
     import moment from 'moment/moment';
     import Qs from 'qs';
 
@@ -113,10 +114,9 @@
                     classifyName: ''
                 },
                 classifies: [],
-                parentName: this.$route.query.classifyName,
                 total: 0,
                 page: 1,
-                pageSize: 10,
+                pageSize: 20,
                 listLoading: false,
                 sels: [],//列表选中列
 
@@ -124,7 +124,7 @@
                 editLoading: false,
                 editFormRules: {
                     classifyName: [
-                        { required: true, message: '请输入名称', trigger: 'blur' }
+                        { required: true, message: '请输入姓名', trigger: 'blur' }
                     ]
                 },
                 //编辑界面数据
@@ -152,15 +152,12 @@
                     classifyDesc: '',
                     classifyOrder: '',
                     iconUrl: '',
-                    parentId: this.$route.query.classifyId,
-                    classifyType: 6
+                    parentId: 0,
+                    classifyType: ClsTypeEnum.KAOTI
                 }
             }
         },
         methods: {
-            handleBack() {
-                this.$router.back();
-            },
             handleSizeChange(val) {
                 this.pageSize = val;
                 this.getList();
@@ -175,12 +172,11 @@
                     pageNum: this.page,
                     pageSize: this.pageSize,
                     classifyName: this.filters.classifyName,
-                    parentId: this.$route.query.classifyId,
-                    classifyType: 6
+                    classifyType: ClsTypeEnum.KAOTI
                 };
                 this.listLoading = true;
 
-                getTwoClassifyById(para).then((res) => {
+                getOneClassifyList(para).then((res) => {
                     let data = res.data.data;
                     this.total = data.total;
                     this.pageSize = data.pageSize;
@@ -207,7 +203,6 @@
                     this.listLoading = true;
                     deleteClassify(row.classifyId).then((res) => {
                         this.listLoading = false;
-
                         if (res.data.status == 200) {
                             this.$message({
                                 message: '删除成功',
@@ -220,14 +215,27 @@
                                 type: 'error'
                             });
                         }
+
                     });
                 }).catch(() => {
 
                 });
             },
-            //显示管理界面
-            handleManage: function (index, row) {
-                this.$router.push({ path: '/twoLev', query: { classifyId: row.classifyId } });
+            //显示专题练习章管理界面
+            handleManage1: function (index, row) {
+                this.$router.push({ path: '/zhang', query: { label: '专题练习', classifyId: row.classifyId, classifyName: row.classifyName, type: ClsTypeEnum.ZTLXZ } });
+            },
+            // 显示知识巩固章管理界面
+            handleManage2: function (index, row) {
+                this.$router.push({ path: '/zhang', query: { label: '知识巩固',  classifyId: row.classifyId, classifyName: row.classifyName, type: ClsTypeEnum.ZSGGZ } });
+            },
+            //显示历年真题管理界面
+            handleManage3: function (index, row) {
+                this.$router.push({ path: '/dy', query: { label: '历年真题',  classifyId: row.classifyId, classifyName: row.classifyName, type: ClsTypeEnum.LNZT } });
+            },
+            //显示仿真练习管理界面
+            handleManage4: function (index, row) {
+                this.$router.push({ path: '/dy', query: { label: '仿真练习',  classifyId: row.classifyId, classifyName: row.classifyName, type: ClsTypeEnum.FZLX } });
             },
 
             //显示编辑界面

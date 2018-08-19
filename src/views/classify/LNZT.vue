@@ -4,6 +4,9 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="filters">
                 <el-form-item>
+                    <el-button type="" v-on:click="handleBack">返回</el-button>
+                </el-form-item>
+                <el-form-item>
                     <el-input v-model="filters.classifyName" placeholder="分类名称"></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -27,15 +30,17 @@
             </el-table-column>
             <el-table-column prop="classifyOrder" label="排序号" sortable>
             </el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable width="180">
+            <el-table-column label="所属年级" render="columnRender">
+                <template slot-scope="scope" >
+                    <div v-html="parentName"></div>
+                </template>
             </el-table-column>
-            <el-table-column label="操作" width="400">
+            <el-table-column prop="updateTime" label="更新时间" :formatter="dateFormat" sortable>
+            </el-table-column>
+            <el-table-column label="操作" width="280">
                 <template scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" @click="handleManageZJ(scope.$index, scope.row)">章节管理</el-button>
-                    <el-button size="small" @click="handleManageDY(scope.$index, scope.row)">单元管理</el-button>
-                    <el-button size="small" @click="handleManageQZQM(scope.$index, scope.row)">期中期末</el-button>
-                    <el-button type="danger"  size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                    <el-button type="danger" :disabled="scope.row.episodeCount > 0" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -43,7 +48,7 @@
         <!--工具条-->
         <el-col :span="24" class="toolbar">
             <el-pagination layout="sizes, prev, pager, next" @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :page-sizes="[10, 20, 50]" :page-size="pageSize" :total="total" style="float:right;">
+                           :page-sizes="[20, 50, 100]" :page-size="pageSize" :total="total" style="float:right;">
             </el-pagination>
         </el-col>
 
@@ -97,7 +102,7 @@
 
 <script>
     import util from '../../common/js/util'
-    import { getOneClassifyList,editClassify,addClassify,deleteClassify,deleteClassifies } from '../../api/api';
+    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies, ClsTypeEnum } from '../../api/api';
     import moment from 'moment/moment';
     import Qs from 'qs';
 
@@ -108,9 +113,10 @@
                     classifyName: ''
                 },
                 classifies: [],
+                parentName: this.$route.query.classifyName,
                 total: 0,
                 page: 1,
-                pageSize: 10,
+                pageSize: 20,
                 listLoading: false,
                 sels: [],//列表选中列
 
@@ -118,7 +124,7 @@
                 editLoading: false,
                 editFormRules: {
                     classifyName: [
-                        { required: true, message: '请输入姓名', trigger: 'blur' }
+                        { required: true, message: '请输入名称', trigger: 'blur' }
                     ]
                 },
                 //编辑界面数据
@@ -146,12 +152,15 @@
                     classifyDesc: '',
                     classifyOrder: '',
                     iconUrl: '',
-                    parentId: 0,
-                    classifyType: 2
+                    parentId: this.$route.query.classifyId,
+                    classifyType: this.$route.query.type
                 }
             }
         },
         methods: {
+            handleBack() {
+                this.$router.back();
+            },
             handleSizeChange(val) {
                 this.pageSize = val;
                 this.getList();
@@ -166,11 +175,12 @@
                     pageNum: this.page,
                     pageSize: this.pageSize,
                     classifyName: this.filters.classifyName,
-                    classifyType: 2
+                    parentId: this.$route.query.classifyId,
+                    classifyType: this.$route.query.type
                 };
                 this.listLoading = true;
 
-                getOneClassifyList(para).then((res) => {
+                getTwoClassifyById(para).then((res) => {
                     let data = res.data.data;
                     this.total = data.total;
                     this.pageSize = data.pageSize;
@@ -197,6 +207,7 @@
                     this.listLoading = true;
                     deleteClassify(row.classifyId).then((res) => {
                         this.listLoading = false;
+
                         if (res.data.status == 200) {
                             this.$message({
                                 message: '删除成功',
@@ -209,23 +220,14 @@
                                 type: 'error'
                             });
                         }
-
                     });
                 }).catch(() => {
 
                 });
             },
-            //显示章节管理界面
-            handleManageZJ: function (index, row) {
-                this.$router.push({ path: '/zhang', query: { classifyId: row.classifyId, classifyName: row.classifyName } });
-            },
-            //显示单元管理界面
-            handleManageDY: function (index, row) {
-                this.$router.push({ path: '/dy', query: { classifyId: row.classifyId, classifyName: row.classifyName } });
-            },
-            //显示期中期末管理界面
-            handleManageQZQM: function (index, row) {
-                this.$router.push({ path: '/qzqm', query: { classifyId: row.classifyId, classifyName: row.classifyName } });
+            //显示管理界面
+            handleManage: function (index, row) {
+                this.$router.push({ path: '/twoLev', query: { classifyId: row.classifyId } });
             },
 
             //显示编辑界面

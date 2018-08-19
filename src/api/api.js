@@ -75,6 +75,17 @@ export const deleteClassifies = params => { return request.post(`/classify/batch
 
 export const getTreeByType = params => { return request.get(`/classify/getTreeByType`, { params: params }); };
 
+export const ClsTypeEnum = {
+    MOVIE: 10,  		//视频分类
+    KAOTI: 20, 		//年级分类
+    ZTLXZ: 21, 			//章节练习-章分类
+    ZTLXJ: 211,   		//章节练习-节分类
+    ZSGGZ: 22,  		//单元练习-单元分类
+    ZSGGJ: 221, 			//期中期末-单元分类
+    LNZT: 23, 		//专业知识练习-章分类
+    FZLX: 24			//专业知识练习-节分类
+};
+
 
 /**************** 用户相关接口 ****************/
 export const getUserList = params => { return request.get(`/user/list`, { params: params }); };

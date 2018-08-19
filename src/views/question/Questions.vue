@@ -29,7 +29,7 @@
             </el-table-column>
             <el-table-column prop="module" label="所属模块" :formatter="moduleFormat" sortable>
             </el-table-column>
-            <el-table-column prop="classifyName" label="分类" width="200" sortable>
+            <el-table-column prop="classifyName" :show-overflow-tooltip=true label="分类" width="200" sortable>
                 <template slot-scope="scope">
                     <el-tag type="success" size="medium">{{ scope.row.classifyName }}</el-tag>
                 </template>
@@ -80,7 +80,7 @@
                 questions: [],
                 total: 0,
                 page: 1,
-                pageSize: 10,
+                pageSize: 20,
                 listLoading: false,
                 sels: []//列表选中列
             }

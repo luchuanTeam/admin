@@ -41,7 +41,7 @@
                 <template scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="small" @click="handleManageZJ(scope.$index, scope.row)">小节管理</el-button>
-                    <el-button type="danger" :disabled="scope.row.episodeCount > 0" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                    <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -49,7 +49,7 @@
         <!--工具条-->
         <el-col :span="24" class="toolbar">
             <el-pagination layout="sizes, prev, pager, next" @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :page-sizes="[10, 20, 50]" :page-size="pageSize" :total="total" style="float:right;">
+                           :page-sizes="[20, 50, 100]" :page-size="pageSize" :total="total" style="float:right;">
             </el-pagination>
         </el-col>
 
@@ -103,7 +103,7 @@
 
 <script>
     import util from '../../common/js/util'
-    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies } from '../../api/api';
+    import { getTwoClassifyById,editClassify,addClassify,deleteClassify,deleteClassifies, ClsTypeEnum } from '../../api/api';
     import moment from 'moment/moment';
     import Qs from 'qs';
 
@@ -114,10 +114,11 @@
                     classifyName: ''
                 },
                 classifies: [],
+                childType: '',
                 parentName: this.$route.query.classifyName,
                 total: 0,
                 page: 1,
-                pageSize: 10,
+                pageSize: 20,
                 listLoading: false,
                 sels: [],//列表选中列
 
@@ -154,7 +155,7 @@
                     classifyOrder: '',
                     iconUrl: '',
                     parentId: this.$route.query.classifyId,
-                    classifyType: 3
+                    classifyType: this.$route.query.type
                 }
             }
         },
@@ -177,7 +178,7 @@
                     pageSize: this.pageSize,
                     classifyName: this.filters.classifyName,
                     parentId: this.$route.query.classifyId,
-                    classifyType: 3
+                    classifyType: this.$route.query.type
                 };
                 this.listLoading = true;
 
@@ -229,7 +230,13 @@
 
             //显示小节管理界面
             handleManageZJ: function (index, row) {
-                this.$router.push({ path: '/jie', query: { classifyId: row.classifyId, classifyName: this.parentName + "/" + row.classifyName } });
+                let label = '';
+                if (this.childType == ClsTypeEnum.ZTLXJ) {
+                    label = '专题练习-节管理';
+                } else if (this.childType == ClsTypeEnum.ZSGGJ) {
+                    label = '知识巩固-节管理';
+                }
+                this.$router.push({ path: '/jie', query: { label: label, classifyId: row.classifyId, classifyName: this.parentName + "/" + row.classifyName, type: this.childType } });
             },
 
             //显示编辑界面
@@ -244,7 +251,9 @@
             //显示新增界面
             handleAdd: function () {
                 this.addFormVisible = true;
-                this.$refs['addForm'].resetFields();
+                if (this.$refs['addForm']) {
+                    this.$refs['addForm'].resetFields();
+                }
             },
             selsChange: function (sels) {
                 this.sels = sels;
@@ -313,6 +322,12 @@
         },
         mounted() {
             this.getList();
+            let type = this.$route.query.type;
+            if (type == ClsTypeEnum.ZTLXZ) {
+                this.childType = ClsTypeEnum.ZTLXJ;
+            } else if (type == ClsTypeEnum.ZSGGZ) {
+                this.childType = ClsTypeEnum.ZSGGJ;
+            }
         }
     }
 
